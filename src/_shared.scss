@@ -1,0 +1,22 @@
+@import url(https://fonts.googleapis.com/css?family=Satisfy);
+
+$satisfy: 'Satisfy', cursive;
+
+$colors: (
+  primary: #005dff,
+  primary-light: lighten(#005dff, 40%),
+  primary-dark: darken(#005dff, 40%),
+  accent: #fff6bb
+);
+
+@function color($color-name) {
+  @return map-get($colors, $color-name);
+}
+
+$desktop: 1350px;
+
+@mixin desktop {
+  @media (min-width: #{$desktop}) {
+    @content;
+  }
+}
