@@ -1,0 +1,142 @@
+@import '../../shared';
+
+.door {
+  @include desktop {
+    width: 100%;
+    height: 100%;
+  }
+
+  width: 100%;
+  height: 100%;
+
+  &__label {
+    font-size: 2.5rem;
+    font-family: $satisfy;
+    margin: auto;
+    transform: translateZ(50px);
+  }
+
+  &__content {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__front,
+  &__back {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: grid;
+    align-content: center;
+  }
+
+  &__front {
+    background-color: lightcoral;
+  }
+
+  &__back {
+    background-image: url('https://unsplash.it/1350/788');
+    background-repeat: no-repeat;
+    background-size: $desktop;
+  }
+}
+
+.day1 {
+  grid-area: day1;
+}
+
+.day2 {
+  grid-area: day2;
+}
+
+.day3 {
+  grid-area: day3;
+}
+
+.day4 {
+  grid-area: day4;
+}
+
+.day5 {
+  grid-area: day5;
+}
+
+.day6 {
+  grid-area: day6;
+}
+
+.day7 {
+  grid-area: day7;
+}
+
+.day8 {
+  grid-area: day8;
+}
+
+.day9 {
+  grid-area: day9;
+}
+
+.day10 {
+  grid-area: day10;
+}
+
+.day11 {
+  grid-area: day11;
+}
+
+.day12 {
+  grid-area: day12;
+}
+
+.day13 {
+  grid-area: day13;
+}
+
+.day14 {
+  grid-area: day14;
+}
+
+.day15 {
+  grid-area: day15;
+}
+
+.day16 {
+  grid-area: day16;
+}
+
+.day17 {
+  grid-area: day17;
+}
+
+.day18 {
+  grid-area: day18;
+}
+
+.day19 {
+  grid-area: day19;
+}
+
+.day20 {
+  grid-area: day20;
+}
+
+.day21 {
+  grid-area: day21;
+}
+
+.day22 {
+  grid-area: day22;
+}
+
+.day23 {
+  grid-area: day23;
+}
+
+.day24 {
+  grid-area: day24;
+}

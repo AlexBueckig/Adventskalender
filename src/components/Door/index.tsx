@@ -1,0 +1,86 @@
+import React, { Component } from 'react';
+import { TweenLite } from 'gsap';
+
+import './Door.scss';
+
+interface IProps {
+  label: string;
+  isOpen: boolean;
+  offset: { left: number; top: number; width: number; height: number };
+}
+
+interface IState {
+  left: number;
+  top: number;
+}
+
+class Door extends Component<IProps, IState> {
+  door: HTMLElement | null;
+  front: HTMLElement | null;
+  back: HTMLElement | null;
+
+  constructor(props: IProps) {
+    super(props);
+    this.door = null;
+    this.front = null;
+    this.back = null;
+    this.state = { left: 0, top: 0 };
+  }
+
+  componentDidMount() {
+    TweenLite.set(this.door, { transformStyle: 'preserve-3d' });
+    TweenLite.set([this.back, this.front], { backfaceVisibility: 'hidden', transformStyle: 'preserve-3d' });
+
+    if (!this.props.isOpen) {
+      TweenLite.set(this.back, { rotationY: -180 });
+    } else {
+      TweenLite.set(this.front, { rotationY: -180 });
+    }
+
+    if (this.door !== null) {
+      this.setState({
+        left: -Math.abs(this.door.getBoundingClientRect().left),
+        top: -Math.abs(this.door.getBoundingClientRect().top)
+      });
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
+    return {
+      left: -Math.abs(prevState.left + nextProps.offset.left),
+      top: -Math.abs(prevState.top + nextProps.offset.top)
+    };
+  }
+
+  onClick() {
+    if (!this.props.isOpen) {
+      TweenLite.to(this.door, 1, { rotationY: -180 });
+    }
+  }
+
+  render() {
+    return (
+      <div className={'door day' + this.props.label} onClick={this.onClick.bind(this)}>
+        <div className="door__content" ref={div => (this.door = div)}>
+          <div className="door__front" ref={div => (this.front = div)}>
+            <p className="door__label">{this.props.label}</p>
+          </div>
+          <div
+            style={{
+              backgroundPositionX: this.state.left,
+              backgroundPositionY: this.state.top,
+              backgroundSize: this.props.offset.width
+            }}
+            className="door__back"
+            ref={div => (this.back = div)}
+          >
+            <p className="door__label">back</p>
+          </div>
+          <p>Test</p>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default Door;
