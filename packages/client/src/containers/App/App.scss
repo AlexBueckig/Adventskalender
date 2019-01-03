@@ -16,7 +16,9 @@ header {
 
 footer {
   background-color: color(primary);
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .App {
@@ -28,6 +30,8 @@ footer {
     'main'
     'footer';
   grid-template-rows: 52px 1fr;
+  font-family: $roboto;
+
   @include desktop {
     grid-template-rows: 100px 1fr 50px;
   }
@@ -40,6 +44,5 @@ main {
     grid-template-areas: '. content .';
     grid-area: main;
     height: 100%;
-    padding: 1em;
   }
 }
