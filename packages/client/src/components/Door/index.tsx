@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 import './Door.scss';
 
 interface IProps {
-  label: string;
+  day: string;
+  message: string;
   isOpen: boolean;
   offset: { left: number; top: number; width: number; height: number };
 }
@@ -61,23 +62,21 @@ class Door extends Component<IProps, IState> {
 
   public render() {
     return (
-      <div className={'door day' + this.props.label} onClick={this.onClick}>
+      <div className={'door day' + this.props.day} onClick={this.onClick}>
         <div className="door__content" ref={div => (this.door = div)}>
           <div className="door__front" ref={div => (this.front = div)}>
-            <p className="door__label">{this.props.label}</p>
+            <p className="door__label">{this.props.day}</p>
           </div>
           <div
             style={{
               backgroundPositionX: this.state.left,
-              backgroundPositionY: this.state.top,
-              backgroundSize: this.props.offset.width
+              backgroundPositionY: this.state.top
             }}
             className="door__back"
             ref={div => (this.back = div)}
           >
             <p className="door__label">back</p>
           </div>
-          <p>Test</p>
         </div>
       </div>
     );
