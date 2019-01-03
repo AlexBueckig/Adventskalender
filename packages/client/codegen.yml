@@ -1,0 +1,21 @@
+overwrite: true
+schema: 'http://localhost:4000/graphql'
+documents: 'src/co*/**/*.tsx'
+exclude:
+generates:
+  src/generated/graphql.tsx:
+    plugins:
+      - add: '/* tslint:disable */'
+      - time
+      - 'typescript-common'
+      - 'typescript-client'
+      - add: '/* tslint:enable */'
+  src/generated/components.tsx:
+    config:
+      noNamespaces: true
+    plugins:
+      - add: '/* tslint:disable */'
+      - typescript-common
+      - typescript-client
+      - typescript-react-apollo
+      - add: '/* tslint:enable */'
