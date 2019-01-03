@@ -63,6 +63,8 @@ export type GetCalendarByUuidDoors = {
   day: string;
 
   message: string;
+
+  open: boolean;
 };
 
 export type GetCalendarByIdVariables = {
@@ -265,6 +267,7 @@ export const GetCalendarByUuidDocument = gql`
         id
         day
         message
+        open
       }
     }
   }

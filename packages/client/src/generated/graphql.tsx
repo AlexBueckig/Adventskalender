@@ -1,5 +1,5 @@
 /* tslint:disable */
-// Generated in 2019-01-03T11:30:06+01:00
+// Generated in 2019-01-03T11:54:52+01:00
 export type Maybe<T> = T | null;
 
 export interface DoorInput {
@@ -67,6 +67,8 @@ export namespace GetCalendarByUuid {
     day: string;
 
     message: string;
+
+    open: boolean;
   };
 }
 
