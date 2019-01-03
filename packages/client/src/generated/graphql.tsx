@@ -1,5 +1,5 @@
 /* tslint:disable */
-// Generated in 2019-01-02T17:29:55+01:00
+// Generated in 2019-01-03T11:30:06+01:00
 export type Maybe<T> = T | null;
 
 export interface DoorInput {
@@ -90,7 +90,7 @@ export namespace GetCalendarById {
 
     year: number;
 
-    url: string;
+    uuid: string;
 
     doors: Maybe<Doors[]>;
   };
@@ -111,7 +111,7 @@ export namespace SaveCalendarMetaData {
     id: string;
     name: string;
     year: number;
-    url: string;
+    uuid: string;
   };
 
   export type Mutation = {

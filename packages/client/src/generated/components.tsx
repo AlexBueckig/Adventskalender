@@ -1,3 +1,4 @@
+/* tslint:disable */
 export type Maybe<T> = T | null;
 
 export interface DoorInput {
@@ -83,7 +84,7 @@ export type GetCalendarByIdCalendar = {
 
   year: number;
 
-  url: string;
+  uuid: string;
 
   doors: Maybe<GetCalendarByIdDoors[]>;
 };
@@ -102,7 +103,7 @@ export type SaveCalendarMetaDataVariables = {
   id: string;
   name: string;
   year: number;
-  url: string;
+  uuid: string;
 };
 
 export type SaveCalendarMetaDataMutation = {
@@ -309,7 +310,7 @@ export const GetCalendarByIdDocument = gql`
       id
       name
       year
-      url
+      uuid
       doors {
         id
         day
@@ -358,9 +359,9 @@ export const SaveCalendarMetaDataDocument = gql`
     $id: ID!
     $name: String!
     $year: Int!
-    $url: String!
+    $uuid: String!
   ) {
-    saveCalendarMetaData(id: $id, name: $name, year: $year, url: $url)
+    saveCalendarMetaData(id: $id, name: $name, year: $year, uuid: $uuid)
   }
 `;
 export class SaveCalendarMetaDataComponent extends React.Component<
@@ -681,3 +682,4 @@ export function SignInHOC<TProps, TChildProps = any>(
     SignInProps<TChildProps>
   >(SignInDocument, operationOptions);
 }
+/* tslint:enable */

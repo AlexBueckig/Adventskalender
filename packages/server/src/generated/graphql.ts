@@ -1,5 +1,5 @@
 /* tslint:disable */
-// Generated in 2019-01-02T17:13:35+01:00
+// Generated in 2019-01-03T11:32:47+01:00
 export type Maybe<T> = T | null;
 
 export interface DoorInput {
@@ -57,7 +57,7 @@ export interface Calendar {
 
   year: number;
 
-  url: string;
+  uuid: string;
 
   doors?: Maybe<Door[]>;
 }
@@ -151,7 +151,7 @@ export interface SaveCalendarMetaDataMutationArgs {
 
   year: number;
 
-  url: string;
+  uuid: string;
 }
 export interface CreateDoorMutationArgs {
   day: string;
