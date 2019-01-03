@@ -15,18 +15,20 @@ export default class DoorItems extends PureComponent<FormikProps<{ doors: GetCal
 
     return (
       <div className="doors">
-        {doors.map((door, index) => {
-          return (
-            <div key={door.id} className="doors__item">
-              <InputField
-                name={`doors.${index}.message`}
-                values={door}
-                placeholder={`Tür ${index + 1}`}
-                {...this.props}
-              />
-            </div>
-          );
-        })}
+        {doors
+          .sort((a, b) => parseInt(a.day, 10) - parseInt(b.day, 10))
+          .map((door, index) => {
+            return (
+              <div key={door.id} className="doors__item">
+                <InputField
+                  name={`doors.${index}.message`}
+                  values={door}
+                  placeholder={`Tür ${index + 1}`}
+                  {...this.props}
+                />
+              </div>
+            );
+          })}
       </div>
     );
   }
