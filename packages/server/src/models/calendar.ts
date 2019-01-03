@@ -13,7 +13,7 @@ export default (sequelize: Sequelize, DataTypes: IDataTypes) => {
       type: DataTypes.INTEGER,
       defaultValue: new Date().getFullYear()
     },
-    url: {
+    uuid: {
       type: DataTypes.STRING,
       defaultValue: ''
     }

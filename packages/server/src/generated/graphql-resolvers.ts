@@ -1,5 +1,5 @@
 /* tslint:disable */
-// Generated in 2019-01-02T17:13:36+01:00
+// Generated in 2019-01-03T11:32:47+01:00
 export type Maybe<T> = T | null;
 
 export interface DoorInput {
@@ -186,7 +186,7 @@ export namespace CalendarResolvers {
 
     year?: YearResolver<number, TypeParent, Context>;
 
-    url?: UrlResolver<string, TypeParent, Context>;
+    uuid?: UuidResolver<string, TypeParent, Context>;
 
     doors?: DoorsResolver<Maybe<Door[]>, TypeParent, Context>;
   }
@@ -206,7 +206,7 @@ export namespace CalendarResolvers {
     Parent = Calendar,
     Context = IContext
   > = Resolver<R, Parent, Context>;
-  export type UrlResolver<
+  export type UuidResolver<
     R = string,
     Parent = Calendar,
     Context = IContext
@@ -333,7 +333,7 @@ export namespace MutationResolvers {
 
     year: number;
 
-    url: string;
+    uuid: string;
   }
 
   export type CreateDoorResolver<
