@@ -1,7 +1,7 @@
 import { FieldArray, Form, Formik, FormikActions } from 'formik';
 import gql from 'graphql-tag';
 import React, { Fragment, PureComponent } from 'react';
-import { ChildMutateProps, compose } from 'react-apollo';
+import { ChildDataProps, ChildMutateProps, compose } from 'react-apollo';
 import { RouteChildrenProps } from 'react-router';
 import * as yup from 'yup';
 
@@ -10,8 +10,10 @@ import DropDown from '../../components/DropDown';
 import InputField from '../../components/InputField';
 import URLField from '../../components/URLField';
 import {
-  GetCalendarByIdComponent,
   GetCalendarByIdDoors,
+  GetCalendarByIdHOC,
+  GetCalendarByIdQuery,
+  GetCalendarByIdVariables,
   SaveCalendarMetaDataHOC,
   SaveCalendarMetaDataMutation,
   SaveCalendarMetaDataVariables,
@@ -35,91 +37,73 @@ type IProps = ChildMutateProps<
   RouteChildrenProps<{ id: string }>,
   SaveCalendarMetaDataMutation | UpdateDoorsMutation,
   SaveCalendarMetaDataVariables | UpdateDoorsVariables
->;
+> &
+  ChildDataProps<RouteChildrenProps<GetCalendarByIdVariables>, GetCalendarByIdQuery, GetCalendarByIdVariables>;
 
 class CalendarEdit extends PureComponent<IProps> {
   public render() {
-    if (!this.props.match) {
+    if (!this.props.match || !this.props.data || !this.props.data.calendar) {
       return null;
     }
 
-    const { id } = this.props.match.params;
+    const { calendar } = this.props.data;
 
     return (
-      <GetCalendarByIdComponent query={GET_CALENDAR_BY_ID} variables={{ id }}>
-        {({ loading, data, error }) => {
-          if (loading) {
-            return <span>Loading...</span>;
-          }
-          if (error) {
-            console.log(error);
-            return `Error!: ${error}`;
-          }
-          if (!data) {
-            return null;
-          }
-
-          const { calendar } = data;
-
-          return (
-            <Fragment>
-              <section>
-                <h2>Kalender</h2>
-                <Formik
-                  initialValues={{
-                    id: calendar.id,
-                    name: calendar.name,
-                    url: calendar.url,
-                    year: calendar.year
-                  }}
-                  onSubmit={this.handleSubmit}
-                  validationSchema={validationSchema}
-                >
-                  {formikProps => {
-                    const year = new Date().getFullYear();
-                    return (
-                      <Form className="form calendarMetaForm">
-                        <div className="row calendarMetaFormRow">
-                          <span>Kalendar für</span>
-                          <InputField name="name" {...formikProps} />
-                          <span>für das Jahr</span>
-                          <DropDown
-                            options={[
-                              { label: year, value: year },
-                              { label: year + 1, value: year + 1 },
-                              { label: year + 2, value: year + 2 }
-                            ]}
-                            name="year"
-                            onChange={formikProps.setFieldValue}
-                            onBlur={formikProps.setFieldTouched}
-                            value={formikProps.values.year}
-                          />
-                          <span>!</span>
-                        </div>
-                        <URLField name="url" {...formikProps} />
-                        <button type="submit">Speichern</button>
-                      </Form>
-                    );
-                  }}
-                </Formik>
-              </section>
-              <section>
-                <h2>Kalendertage</h2>
-                <Formik initialValues={{ doors: calendar.doors || [] }} onSubmit={this.handleDoorsSubmit}>
-                  {formikProps => {
-                    return (
-                      <Form className="form doorsForm">
-                        <FieldArray name="doors">{() => <DoorItems {...formikProps} />}</FieldArray>
-                        <button type="submit">Speichern</button>
-                      </Form>
-                    );
-                  }}
-                </Formik>
-              </section>
-            </Fragment>
-          );
-        }}
-      </GetCalendarByIdComponent>
+      <Fragment>
+        <section>
+          <h2>Kalender</h2>
+          <Formik
+            initialValues={{
+              id: calendar.id,
+              name: calendar.name,
+              uuid: `http://localhost:3000/calendar/${calendar.uuid}`,
+              year: calendar.year
+            }}
+            onSubmit={this.handleSubmit}
+            validationSchema={validationSchema}
+          >
+            {formikProps => {
+              const year = new Date().getFullYear();
+              return (
+                <Form className="form calendarMetaForm">
+                  <div className="row calendarMetaFormRow">
+                    <span>Kalendar für</span>
+                    <InputField name="name" {...formikProps} />
+                    <span>für das Jahr</span>
+                    <DropDown
+                      options={[
+                        { label: year, value: year },
+                        { label: year + 1, value: year + 1 },
+                        { label: year + 2, value: year + 2 }
+                      ]}
+                      name="year"
+                      onChange={formikProps.setFieldValue}
+                      onBlur={formikProps.setFieldTouched}
+                      value={formikProps.values.year}
+                    />
+                    <span>!</span>
+                  </div>
+                  <URLField name="uuid" {...formikProps} />
+                  <button type="submit">Speichern</button>
+                </Form>
+              );
+            }}
+          </Formik>
+        </section>
+        <section>
+          <h2>Kalendertage</h2>
+          <Formik initialValues={{ doors: calendar.doors || [] }} onSubmit={this.handleDoorsSubmit}>
+            {formikProps => {
+              return (
+                <Form className="form doorsForm">
+                  <FieldArray name="doors">{() => <DoorItems {...formikProps} />}</FieldArray>
+                  <button type="submit">Speichern</button>
+                </Form>
+              );
+            }}
+          </Formik>
+        </section>
+      </Fragment>
     );
   }
 
@@ -131,7 +115,12 @@ class CalendarEdit extends PureComponent<IProps> {
     alert(JSON.stringify(values, null, 2));
     // @ts-ignore
     this.props.saveCalendarMetaData({
-      variables: { id: values.id, name: values.name, year: parseInt(`${values.year}`, 10), url: values.url }
+      variables: {
+        id: values.id,
+        name: values.name,
+        year: parseInt(`${values.year}`, 10),
+        uuid: values.uuid.replace('http://localhost:3000/calendar/', '')
+      }
     });
   };
 
@@ -139,9 +128,13 @@ class CalendarEdit extends PureComponent<IProps> {
     setSubmitting(false);
     const doors: Array<{ id: string; message: string }> = [];
     values.doors.map((door, index) => {
-      // TODO: QueryComponent durch HOC ersetzen
-      // if(door.message !== this.props.data.doors[index])
-      doors.push({ id: door.id, message: door.message });
+      if (
+        this.props.data.calendar &&
+        this.props.data.calendar.doors &&
+        door.message !== this.props.data.calendar.doors[index].message
+      ) {
+        doors.push({ id: door.id, message: door.message });
+      }
     });
 
     // @ts-ignore
@@ -157,7 +150,7 @@ export const GET_CALENDAR_BY_ID = gql`
       id
       name
       year
-      url
+      uuid
       doors {
         id
         day
@@ -168,8 +161,8 @@ export const GET_CALENDAR_BY_ID = gql`
 `;
 
 export const SAVE_CALENDAR_META_DATA = gql`
-  mutation SaveCalendarMetaData($id: ID!, $name: String!, $year: Int!, $url: String!) {
-    saveCalendarMetaData(id: $id, name: $name, year: $year, url: $url)
+  mutation SaveCalendarMetaData($id: ID!, $name: String!, $year: Int!, $uuid: String!) {
+    saveCalendarMetaData(id: $id, name: $name, year: $year, uuid: $uuid)
   }
 `;
 
@@ -181,5 +174,14 @@ export const UPDATE_DOORS = gql`
 
 export default compose(
   UpdateDoorsHOC({ name: 'updateDoors' }),
-  SaveCalendarMetaDataHOC({ name: 'saveCalendarMetaData' })
+  SaveCalendarMetaDataHOC({ name: 'saveCalendarMetaData' }),
+  GetCalendarByIdHOC({
+    options: (props: RouteChildrenProps<GetCalendarByIdVariables>) => {
+      if (props.match) {
+        return { variables: { id: props.match.params.id } };
+      } else {
+        return {};
+      }
+    }
+  })
 )(CalendarEdit);
