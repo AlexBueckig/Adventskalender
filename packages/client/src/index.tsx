@@ -69,9 +69,8 @@ const client = new ApolloClient({
       if (graphQLErrors) {
         graphQLErrors.map(({ message, locations, path, extensions }) => {
           console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
-          if (extensions && extensions.code === 'UNAUTHENTICATED') {
-            console.log('UNAUTHENTICATED');
-            localStorage.removeItem('token');
+          if (extensions && (extensions.code === 'FORBIDDEN' || extensions.code === 'UNAUTHENTICATED')) {
+            cookies.remove('token');
             history.replace('/');
           }
         });
