@@ -1,0 +1,18 @@
+@import '../../shared';
+
+.create-form {
+  padding: 1em;
+
+  button {
+    float: right;
+    margin: 0.5em;
+  }
+
+  @include desktop {
+    display: flex;
+
+    input {
+      flex: 1;
+    }
+  }
+}
