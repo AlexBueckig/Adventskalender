@@ -1,0 +1,16 @@
+@import '../../shared';
+
+.doors {
+  @include desktop {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    width: 100%;
+
+    &__item {
+      min-width: 350px;
+      margin-bottom: 2em;
+    }
+  }
+}
