@@ -1,0 +1,13 @@
+@import '../../shared';
+.urlFieldRow {
+  @include desktop {
+    display: flex;
+    align-items: center;
+    .url-field {
+      input {
+        min-width: 600px;
+        flex: 1;
+      }
+    }
+  }
+}
