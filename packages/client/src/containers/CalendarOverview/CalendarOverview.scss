@@ -1,0 +1,82 @@
+@import '../../shared';
+
+.list {
+  &__content {
+    @include desktop {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+    }
+  }
+
+  &__header {
+    font-size: 2em;
+    margin: 0 1em;
+  }
+
+  &__item {
+    width: 100%;
+    background-color: aliceblue;
+    border-top: 1px solid black;
+    padding: 1em;
+    display: flex;
+    align-items: center;
+
+    &:last-of-type {
+      border-bottom: 1px solid black;
+      @include desktop {
+        border: 1px solid #eee;
+      }
+    }
+
+    .button__delete {
+      margin-right: 1em;
+    }
+
+    a {
+      cursor: pointer;
+      display: contents;
+    }
+
+    span {
+      flex: 1;
+    }
+
+    @include desktop {
+      width: 300px;
+      height: 200px;
+      border: 1px solid #eee;
+      margin: 1em;
+      border-radius: 3px;
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+      display: flex;
+      position: relative;
+      align-items: flex-end;
+      background-image: url('https://unsplash.it/1350/788');
+      background-size: cover;
+
+      .button__delete {
+        position: absolute;
+        margin: 0;
+        top: 1em;
+        right: 1em;
+      }
+
+      a {
+        display: flex;
+        align-items: center;
+        height: 40%;
+        width: 100%;
+        background-color: #eee;
+        border-radius: 2px;
+        text-align: center;
+        padding: 0 1em;
+
+        span {
+          font-size: 1.5em;
+          flex: 1;
+        }
+      }
+    }
+  }
+}
