@@ -2,35 +2,12 @@ import React, { PureComponent } from 'react';
 import './Adventcalendar.scss';
 
 import gql from 'graphql-tag';
+import { ChildDataProps } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import Door from '../../components/Door';
+import { GetCalendarByUuidHOC, GetCalendarByUuidQuery, GetCalendarByUuidVariables } from '../../generated/components';
 
-const doors = [
-  { label: 1, open: false, message: '' },
-  { label: 2, open: false, message: '' },
-  { label: 3, open: false, message: '' },
-  { label: 4, open: false, message: '' },
-  { label: 5, open: false, message: '' },
-  { label: 6, open: false, message: '' },
-  { label: 7, open: false, message: '' },
-  { label: 8, open: false, message: '' },
-  { label: 9, open: false, message: '' },
-  { label: 10, open: false, message: '' },
-  { label: 11, open: false, message: '' },
-  { label: 12, open: false, message: '' },
-  { label: 13, open: false, message: '' },
-  { label: 14, open: false, message: '' },
-  { label: 15, open: false, message: '' },
-  { label: 16, open: false, message: '' },
-  { label: 17, open: false, message: '' },
-  { label: 18, open: false, message: '' },
-  { label: 19, open: false, message: '' },
-  { label: 20, open: false, message: '' },
-  { label: 21, open: false, message: '' },
-  { label: 22, open: false, message: '' },
-  { label: 23, open: false, message: '' },
-  { label: 24, open: false, message: '' }
-];
+type IProps = ChildDataProps<RouteComponentProps, GetCalendarByUuidQuery, GetCalendarByUuidVariables>;
 
 interface IState {
   left: number;
@@ -39,33 +16,33 @@ interface IState {
   height: number;
 }
 
-class Adventcalendar extends PureComponent<RouteComponentProps, IState> {
-  private section: HTMLElement | null;
-
-  constructor(props: RouteComponentProps) {
+class Adventcalendar extends PureComponent<IProps, IState> {
+  constructor(props: IProps) {
     super(props);
     this.state = { left: 0, top: 0, width: 0, height: 0 };
-    this.section = null;
   }
 
-  public componentDidMount() {
-    if (this.section !== null) {
-      const { left, top, width, height } = this.section.getBoundingClientRect();
-      this.setState({
-        left,
-        top,
-        width,
-        height
-      });
-    }
-  }
+  public handleRef = (section: HTMLElement) => {
+    const { left, top, width, height } = section.getBoundingClientRect();
+    this.setState({
+      left,
+      top,
+      width,
+      height
+    });
+  };
 
   public render() {
-    const offset = { left: this.state.left, top: this.state.top, width: this.state.width, height: this.state.height };
+    const offset = this.state;
+
+    if (!this.props.data.getCalendarByUuid || !this.props.data.getCalendarByUuid.doors) {
+      return null;
+    }
+    const doors = this.props.data.getCalendarByUuid.doors;
     return (
-      <section id="calendar" ref={section => (this.section = section)}>
+      <section id="calendar" ref={this.handleRef}>
         {doors.map(door => (
-          <Door key={door.label} label={door.label.toString()} isOpen={door.open} offset={offset} />
+          <Door key={door.day} day={door.day} message={door.message} isOpen={door.open} offset={offset} />
         ))}
       </section>
     );
@@ -80,9 +57,14 @@ export const GET_CALENDAR_BY_UUID = gql`
         id
         day
         message
+        open
       }
     }
   }
 `;
 
-export default Adventcalendar;
+export default GetCalendarByUuidHOC({
+  options: (props: RouteComponentProps<GetCalendarByUuidVariables>) => {
+    return { variables: { uuid: props.match.params.uuid } };
+  }
+})(Adventcalendar);
