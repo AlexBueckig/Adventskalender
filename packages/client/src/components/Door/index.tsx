@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
 import { TweenLite } from 'gsap';
+import React, { Component } from 'react';
 
 import './Door.scss';
 
@@ -15,9 +15,15 @@ interface IState {
 }
 
 class Door extends Component<IProps, IState> {
-  door: HTMLElement | null;
-  front: HTMLElement | null;
-  back: HTMLElement | null;
+  public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
+    return {
+      left: -Math.abs(prevState.left + nextProps.offset.left),
+      top: -Math.abs(prevState.top + nextProps.offset.top)
+    };
+  }
+  public door: HTMLElement | null;
+  public front: HTMLElement | null;
+  public back: HTMLElement | null;
 
   constructor(props: IProps) {
     super(props);
@@ -25,9 +31,11 @@ class Door extends Component<IProps, IState> {
     this.front = null;
     this.back = null;
     this.state = { left: 0, top: 0 };
+
+    this.onClick = this.onClick.bind(this);
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     TweenLite.set(this.door, { transformStyle: 'preserve-3d' });
     TweenLite.set([this.back, this.front], { backfaceVisibility: 'hidden', transformStyle: 'preserve-3d' });
 
@@ -45,22 +53,15 @@ class Door extends Component<IProps, IState> {
     }
   }
 
-  static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
-    return {
-      left: -Math.abs(prevState.left + nextProps.offset.left),
-      top: -Math.abs(prevState.top + nextProps.offset.top)
-    };
-  }
-
-  onClick() {
+  public onClick() {
     if (!this.props.isOpen) {
       TweenLite.to(this.door, 1, { rotationY: -180 });
     }
   }
 
-  render() {
+  public render() {
     return (
-      <div className={'door day' + this.props.label} onClick={this.onClick.bind(this)}>
+      <div className={'door day' + this.props.label} onClick={this.onClick}>
         <div className="door__content" ref={div => (this.door = div)}>
           <div className="door__front" ref={div => (this.front = div)}>
             <p className="door__label">{this.props.label}</p>
