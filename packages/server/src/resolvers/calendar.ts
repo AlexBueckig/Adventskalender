@@ -17,7 +17,7 @@ export const calendarQueryResolver: QueryResolvers.Resolvers = {
     return await models.Calendar.findById(args.id);
   },
   getCalendarByUuid: async (parent, args, { me, models }) => {
-    return await models.Calendar.find({ where: { uuid: args.uuid } });
+    return await models.Calendar.findOne({ where: { uuid: args.uuid } });
   }
 };
 
