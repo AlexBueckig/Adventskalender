@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import './Adventcalendar.scss';
 
+import gql from 'graphql-tag';
+import { RouteComponentProps } from 'react-router';
 import Door from '../../components/Door';
 
 const doors = [
@@ -27,17 +29,8 @@ const doors = [
   { label: 21, open: false, message: '' },
   { label: 22, open: false, message: '' },
   { label: 23, open: false, message: '' },
-  { label: 24, open: true, message: '' }
+  { label: 24, open: false, message: '' }
 ];
-
-/*
-import ReactDOM from 'react-dom';
-
-componentDidMount() {
-    var rect = ReactDOM.findDOMNode(this)
-      .getBoundingClientRect()
-  }
-*/
 
 interface IState {
   left: number;
@@ -46,16 +39,16 @@ interface IState {
   height: number;
 }
 
-class Adventcalendar extends PureComponent<{}, IState> {
-  section: HTMLElement | null;
+class Adventcalendar extends PureComponent<RouteComponentProps, IState> {
+  private section: HTMLElement | null;
 
-  constructor() {
-    super({});
+  constructor(props: RouteComponentProps) {
+    super(props);
     this.state = { left: 0, top: 0, width: 0, height: 0 };
     this.section = null;
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     if (this.section !== null) {
       const { left, top, width, height } = this.section.getBoundingClientRect();
       this.setState({
@@ -67,7 +60,7 @@ class Adventcalendar extends PureComponent<{}, IState> {
     }
   }
 
-  render() {
+  public render() {
     const offset = { left: this.state.left, top: this.state.top, width: this.state.width, height: this.state.height };
     return (
       <section id="calendar" ref={section => (this.section = section)}>
@@ -78,5 +71,18 @@ class Adventcalendar extends PureComponent<{}, IState> {
     );
   }
 }
+
+export const GET_CALENDAR_BY_UUID = gql`
+  query GetCalendarByUuid($uuid: String!) {
+    getCalendarByUuid(uuid: $uuid) {
+      name
+      doors {
+        id
+        day
+        message
+      }
+    }
+  }
+`;
 
 export default Adventcalendar;
