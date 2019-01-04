@@ -42,7 +42,7 @@ class Adventcalendar extends PureComponent<IProps, IState> {
     return (
       <section id="calendar" ref={this.handleRef}>
         {doors.map(door => (
-          <Door key={door.day} day={door.day} message={door.message} isOpen={door.open} offset={offset} />
+          <Door key={door.id} id={door.id} day={door.day} message={door.message} isOpen={door.open} offset={offset} />
         ))}
       </section>
     );
