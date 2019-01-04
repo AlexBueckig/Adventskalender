@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import './Door.scss';
 
 interface IProps {
+  id: string;
   day: string;
   message: string;
   isOpen: boolean;
@@ -32,8 +33,6 @@ class Door extends Component<IProps, IState> {
     this.front = null;
     this.back = null;
     this.state = { left: 0, top: 0 };
-
-    this.onClick = this.onClick.bind(this);
   }
 
   public componentDidMount() {
@@ -54,11 +53,15 @@ class Door extends Component<IProps, IState> {
     }
   }
 
-  public onClick() {
+  public onClick = () => {
     if (!this.props.isOpen) {
       TweenLite.to(this.door, 1, { rotationY: -180 });
     }
-  }
+  };
+
+  public onDoorBackClick = () => {
+    console.log('Door clicked');
+  };
 
   public render() {
     return (
@@ -75,7 +78,9 @@ class Door extends Component<IProps, IState> {
             className="door__back"
             ref={div => (this.back = div)}
           >
-            <p className="door__label">back</p>
+            <p className="door__label" style={{ width: '100%', height: '100%' }} onClick={this.onDoorBackClick}>
+              back
+            </p>
           </div>
         </div>
       </div>
