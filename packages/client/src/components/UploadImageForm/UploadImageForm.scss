@@ -1,0 +1,21 @@
+@import '../../shared';
+
+.uploadImageForm {
+  text-align: center;
+  margin: 0.5em;
+  position: relative;
+
+  button[type='button'] {
+    position: absolute;
+    margin: 0;
+    top: 1em;
+    right: 1em;
+  }
+
+  @include desktop {
+    padding: 1em;
+    margin: 0 1em;
+    background: white;
+    height: 212px;
+  }
+}

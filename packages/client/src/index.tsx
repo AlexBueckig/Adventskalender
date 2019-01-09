@@ -1,26 +1,24 @@
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
 import { split } from 'apollo-link';
 import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
-import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from 'apollo-link-ws';
+import { createUploadLink } from 'apollo-upload-client';
 import { getMainDefinition } from 'apollo-utilities';
 import { createBrowserHistory } from 'history';
+import M from 'materialize-css';
 import React from 'react';
 import { ApolloProvider } from 'react-apollo';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
-
 import Cookies from 'universal-cookie';
+
 import App from './containers/App';
-import './index.scss';
 import registerServiceWorker from './registerServiceWorker';
 
-library.add(faChevronRight);
+import './index.scss';
 
 const history = createBrowserHistory();
 
@@ -28,7 +26,7 @@ const cookies = new Cookies();
 
 const url = 'http://localhost:4000/graphql';
 
-const httpLink = new HttpLink({
+const httpLink = createUploadLink({
   uri: url
 });
 
@@ -69,6 +67,7 @@ const client = new ApolloClient({
       if (graphQLErrors) {
         graphQLErrors.map(({ message, locations, path, extensions }) => {
           console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
+          M.toast({ html: message });
           if (extensions && (extensions.code === 'FORBIDDEN' || extensions.code === 'UNAUTHENTICATED')) {
             cookies.remove('token');
             history.replace('/');
@@ -77,6 +76,7 @@ const client = new ApolloClient({
       }
       if (networkError) {
         console.log(`[Network error]: ${networkError}`);
+        M.toast({ html: 'Server nicht erreichbar, bitte versuchen Sie es später erneut' });
       }
     }),
     link
