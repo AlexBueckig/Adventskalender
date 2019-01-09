@@ -1,5 +1,5 @@
 /* tslint:disable */
-// Generated in 2019-01-03T11:32:47+01:00
+// Generated in 2019-01-07T20:28:33+01:00
 export type Maybe<T> = T | null;
 
 export interface DoorInput {
@@ -186,9 +186,11 @@ export namespace CalendarResolvers {
 
     year?: YearResolver<number, TypeParent, Context>;
 
-    uuid?: UuidResolver<string, TypeParent, Context>;
+    uuid?: UuidResolver<Maybe<string>, TypeParent, Context>;
 
     doors?: DoorsResolver<Maybe<Door[]>, TypeParent, Context>;
+
+    image_url?: ImageUrlResolver<Maybe<string>, TypeParent, Context>;
   }
 
   export type IdResolver<
@@ -207,12 +209,17 @@ export namespace CalendarResolvers {
     Context = IContext
   > = Resolver<R, Parent, Context>;
   export type UuidResolver<
-    R = string,
+    R = Maybe<string>,
     Parent = Calendar,
     Context = IContext
   > = Resolver<R, Parent, Context>;
   export type DoorsResolver<
     R = Maybe<Door[]>,
+    Parent = Calendar,
+    Context = IContext
+  > = Resolver<R, Parent, Context>;
+  export type ImageUrlResolver<
+    R = Maybe<string>,
     Parent = Calendar,
     Context = IContext
   > = Resolver<R, Parent, Context>;
@@ -272,6 +279,12 @@ export namespace MutationResolvers {
     createDoor?: CreateDoorResolver<Maybe<Door>, TypeParent, Context>;
 
     updateDoors?: UpdateDoorsResolver<boolean, TypeParent, Context>;
+
+    openDoor?: OpenDoorResolver<boolean, TypeParent, Context>;
+
+    uploadImage?: UploadImageResolver<string, TypeParent, Context>;
+
+    deleteImage?: DeleteImageResolver<boolean, TypeParent, Context>;
   }
 
   export type _Resolver<
@@ -333,7 +346,7 @@ export namespace MutationResolvers {
 
     year: number;
 
-    uuid: string;
+    uuid?: Maybe<string>;
   }
 
   export type CreateDoorResolver<
@@ -356,6 +369,37 @@ export namespace MutationResolvers {
   > = Resolver<R, Parent, Context, UpdateDoorsArgs>;
   export interface UpdateDoorsArgs {
     doors?: Maybe<DoorInput[]>;
+  }
+
+  export type OpenDoorResolver<
+    R = boolean,
+    Parent = {},
+    Context = IContext
+  > = Resolver<R, Parent, Context, OpenDoorArgs>;
+  export interface OpenDoorArgs {
+    doorId: string;
+  }
+
+  export type UploadImageResolver<
+    R = string,
+    Parent = {},
+    Context = IContext
+  > = Resolver<R, Parent, Context, UploadImageArgs>;
+  export interface UploadImageArgs {
+    calendarId: string;
+
+    file: Upload;
+  }
+
+  export type DeleteImageResolver<
+    R = boolean,
+    Parent = {},
+    Context = IContext
+  > = Resolver<R, Parent, Context, DeleteImageArgs>;
+  export interface DeleteImageArgs {
+    publicId: string;
+
+    calendarId: string;
   }
 }
 
@@ -429,6 +473,32 @@ export namespace CalendarDeletedResolvers {
   > = Resolver<R, Parent, Context>;
 }
 
+export namespace FileResolvers {
+  export interface Resolvers<Context = IContext, TypeParent = File> {
+    filename?: FilenameResolver<string, TypeParent, Context>;
+
+    mimetype?: MimetypeResolver<string, TypeParent, Context>;
+
+    encoding?: EncodingResolver<string, TypeParent, Context>;
+  }
+
+  export type FilenameResolver<
+    R = string,
+    Parent = File,
+    Context = IContext
+  > = Resolver<R, Parent, Context>;
+  export type MimetypeResolver<
+    R = string,
+    Parent = File,
+    Context = IContext
+  > = Resolver<R, Parent, Context>;
+  export type EncodingResolver<
+    R = string,
+    Parent = File,
+    Context = IContext
+  > = Resolver<R, Parent, Context>;
+}
+
 export type CacheControlDirectiveResolver<Result> = DirectiveResolverFn<
   Result,
   CacheControlDirectiveArgs,
@@ -470,7 +540,7 @@ export type DeprecatedDirectiveResolver<Result> = DirectiveResolverFn<
 >;
 export interface DeprecatedDirectiveArgs {
   /** Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax (as specified by [CommonMark](https://commonmark.org/). */
-  reason?: Maybe<string>;
+  reason?: string;
 }
 
 export interface UploadScalarConfig
@@ -488,6 +558,7 @@ export interface IResolvers {
   Subscription?: SubscriptionResolvers.Resolvers;
   CalendarCreated?: CalendarCreatedResolvers.Resolvers;
   CalendarDeleted?: CalendarDeletedResolvers.Resolvers;
+  File?: FileResolvers.Resolvers;
   Upload?: GraphQLScalarType;
 }
 

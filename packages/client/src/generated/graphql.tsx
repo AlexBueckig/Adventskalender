@@ -1,5 +1,5 @@
 /* tslint:disable */
-// Generated in 2019-01-03T11:54:52+01:00
+// Generated in 2019-01-07T20:29:09+01:00
 export type Maybe<T> = T | null;
 
 export interface DoorInput {
@@ -20,6 +20,21 @@ export type Upload = any;
 // Documents
 // ====================================================
 
+export namespace SaveCalendarMetaData {
+  export type Variables = {
+    id: string;
+    name: string;
+    year: number;
+    uuid?: Maybe<string>;
+  };
+
+  export type Mutation = {
+    __typename?: "Mutation";
+
+    saveCalendarMetaData: boolean;
+  };
+}
+
 export namespace CreateCalendar {
   export type Variables = {
     name: string;
@@ -37,6 +52,44 @@ export namespace CreateCalendar {
     id: string;
 
     name: string;
+  };
+}
+
+export namespace OpenDoor {
+  export type Variables = {
+    doorId: string;
+  };
+
+  export type Mutation = {
+    __typename?: "Mutation";
+
+    openDoor: boolean;
+  };
+}
+
+export namespace UploadImage {
+  export type Variables = {
+    calendarId: string;
+    file: Upload;
+  };
+
+  export type Mutation = {
+    __typename?: "Mutation";
+
+    uploadImage: string;
+  };
+}
+
+export namespace DeleteImage {
+  export type Variables = {
+    publicId: string;
+    calendarId: string;
+  };
+
+  export type Mutation = {
+    __typename?: "Mutation";
+
+    deleteImage: boolean;
   };
 }
 
@@ -92,7 +145,9 @@ export namespace GetCalendarById {
 
     year: number;
 
-    uuid: string;
+    uuid: Maybe<string>;
+
+    image_url: Maybe<string>;
 
     doors: Maybe<Doors[]>;
   };
@@ -105,21 +160,6 @@ export namespace GetCalendarById {
     day: string;
 
     message: string;
-  };
-}
-
-export namespace SaveCalendarMetaData {
-  export type Variables = {
-    id: string;
-    name: string;
-    year: number;
-    uuid: string;
-  };
-
-  export type Mutation = {
-    __typename?: "Mutation";
-
-    saveCalendarMetaData: boolean;
   };
 }
 
@@ -150,6 +190,8 @@ export namespace GetCalendars {
     id: string;
 
     name: string;
+
+    image_url: Maybe<string>;
   };
 }
 
@@ -186,6 +228,8 @@ export namespace CalendarCreated {
     id: string;
 
     name: string;
+
+    image_url: Maybe<string>;
   };
 }
 

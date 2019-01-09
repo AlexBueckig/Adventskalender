@@ -1,5 +1,5 @@
 /* tslint:disable */
-// Generated in 2019-01-03T11:32:47+01:00
+// Generated in 2019-01-07T20:28:32+01:00
 export type Maybe<T> = T | null;
 
 export interface DoorInput {
@@ -57,9 +57,11 @@ export interface Calendar {
 
   year: number;
 
-  uuid: string;
+  uuid?: Maybe<string>;
 
   doors?: Maybe<Door[]>;
+
+  image_url?: Maybe<string>;
 }
 
 export interface Door {
@@ -88,6 +90,12 @@ export interface Mutation {
   createDoor?: Maybe<Door>;
 
   updateDoors: boolean;
+
+  openDoor: boolean;
+
+  uploadImage: string;
+
+  deleteImage: boolean;
 }
 
 export interface Token {
@@ -108,6 +116,14 @@ export interface CalendarCreated {
 
 export interface CalendarDeleted {
   id: string;
+}
+
+export interface File {
+  filename: string;
+
+  mimetype: string;
+
+  encoding: string;
 }
 
 // ====================================================
@@ -151,7 +167,7 @@ export interface SaveCalendarMetaDataMutationArgs {
 
   year: number;
 
-  uuid: string;
+  uuid?: Maybe<string>;
 }
 export interface CreateDoorMutationArgs {
   day: string;
@@ -162,6 +178,19 @@ export interface CreateDoorMutationArgs {
 }
 export interface UpdateDoorsMutationArgs {
   doors?: Maybe<DoorInput[]>;
+}
+export interface OpenDoorMutationArgs {
+  doorId: string;
+}
+export interface UploadImageMutationArgs {
+  calendarId: string;
+
+  file: Upload;
+}
+export interface DeleteImageMutationArgs {
+  publicId: string;
+
+  calendarId: string;
 }
 
 /* tslint:enable */

@@ -19,6 +19,19 @@ export type Upload = any;
 // Documents
 // ====================================================
 
+export type SaveCalendarMetaDataVariables = {
+  id: string;
+  name: string;
+  year: number;
+  uuid?: Maybe<string>;
+};
+
+export type SaveCalendarMetaDataMutation = {
+  __typename?: "Mutation";
+
+  saveCalendarMetaData: boolean;
+};
+
 export type CreateCalendarVariables = {
   name: string;
 };
@@ -35,6 +48,38 @@ export type CreateCalendarCreateCalendar = {
   id: string;
 
   name: string;
+};
+
+export type OpenDoorVariables = {
+  doorId: string;
+};
+
+export type OpenDoorMutation = {
+  __typename?: "Mutation";
+
+  openDoor: boolean;
+};
+
+export type UploadImageVariables = {
+  calendarId: string;
+  file: Upload;
+};
+
+export type UploadImageMutation = {
+  __typename?: "Mutation";
+
+  uploadImage: string;
+};
+
+export type DeleteImageVariables = {
+  publicId: string;
+  calendarId: string;
+};
+
+export type DeleteImageMutation = {
+  __typename?: "Mutation";
+
+  deleteImage: boolean;
 };
 
 export type GetCalendarByUuidVariables = {
@@ -86,7 +131,9 @@ export type GetCalendarByIdCalendar = {
 
   year: number;
 
-  uuid: string;
+  uuid: Maybe<string>;
+
+  image_url: Maybe<string>;
 
   doors: Maybe<GetCalendarByIdDoors[]>;
 };
@@ -99,19 +146,6 @@ export type GetCalendarByIdDoors = {
   day: string;
 
   message: string;
-};
-
-export type SaveCalendarMetaDataVariables = {
-  id: string;
-  name: string;
-  year: number;
-  uuid: string;
-};
-
-export type SaveCalendarMetaDataMutation = {
-  __typename?: "Mutation";
-
-  saveCalendarMetaData: boolean;
 };
 
 export type UpdateDoorsVariables = {
@@ -138,6 +172,8 @@ export type GetCalendarsCalendars = {
   id: string;
 
   name: string;
+
+  image_url: Maybe<string>;
 };
 
 export type DeleteCalendarVariables = {
@@ -170,6 +206,8 @@ export type CalendarCreatedCalendar = {
   id: string;
 
   name: string;
+
+  image_url: Maybe<string>;
 };
 
 export type CalendarDeletedVariables = {};
@@ -212,6 +250,64 @@ import gql from "graphql-tag";
 // Components
 // ====================================================
 
+export const SaveCalendarMetaDataDocument = gql`
+  mutation SaveCalendarMetaData(
+    $id: ID!
+    $name: String!
+    $year: Int!
+    $uuid: String
+  ) {
+    saveCalendarMetaData(id: $id, name: $name, year: $year, uuid: $uuid)
+  }
+`;
+export class SaveCalendarMetaDataComponent extends React.Component<
+  Partial<
+    ReactApollo.MutationProps<
+      SaveCalendarMetaDataMutation,
+      SaveCalendarMetaDataVariables
+    >
+  >
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<
+        SaveCalendarMetaDataMutation,
+        SaveCalendarMetaDataVariables
+      >
+        mutation={SaveCalendarMetaDataDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type SaveCalendarMetaDataProps<TChildProps = any> = Partial<
+  ReactApollo.MutateProps<
+    SaveCalendarMetaDataMutation,
+    SaveCalendarMetaDataVariables
+  >
+> &
+  TChildProps;
+export type SaveCalendarMetaDataMutationFn = ReactApollo.MutationFn<
+  SaveCalendarMetaDataMutation,
+  SaveCalendarMetaDataVariables
+>;
+export function SaveCalendarMetaDataHOC<TProps, TChildProps = any>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        SaveCalendarMetaDataMutation,
+        SaveCalendarMetaDataVariables,
+        SaveCalendarMetaDataProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.graphql<
+    TProps,
+    SaveCalendarMetaDataMutation,
+    SaveCalendarMetaDataVariables,
+    SaveCalendarMetaDataProps<TChildProps>
+  >(SaveCalendarMetaDataDocument, operationOptions);
+}
 export const CreateCalendarDocument = gql`
   mutation CreateCalendar($name: String!) {
     createCalendar(name: $name) {
@@ -258,6 +354,132 @@ export function CreateCalendarHOC<TProps, TChildProps = any>(
     CreateCalendarVariables,
     CreateCalendarProps<TChildProps>
   >(CreateCalendarDocument, operationOptions);
+}
+export const OpenDoorDocument = gql`
+  mutation OpenDoor($doorId: ID!) {
+    openDoor(doorId: $doorId)
+  }
+`;
+export class OpenDoorComponent extends React.Component<
+  Partial<ReactApollo.MutationProps<OpenDoorMutation, OpenDoorVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<OpenDoorMutation, OpenDoorVariables>
+        mutation={OpenDoorDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type OpenDoorProps<TChildProps = any> = Partial<
+  ReactApollo.MutateProps<OpenDoorMutation, OpenDoorVariables>
+> &
+  TChildProps;
+export type OpenDoorMutationFn = ReactApollo.MutationFn<
+  OpenDoorMutation,
+  OpenDoorVariables
+>;
+export function OpenDoorHOC<TProps, TChildProps = any>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        OpenDoorMutation,
+        OpenDoorVariables,
+        OpenDoorProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.graphql<
+    TProps,
+    OpenDoorMutation,
+    OpenDoorVariables,
+    OpenDoorProps<TChildProps>
+  >(OpenDoorDocument, operationOptions);
+}
+export const UploadImageDocument = gql`
+  mutation UploadImage($calendarId: ID!, $file: Upload!) {
+    uploadImage(calendarId: $calendarId, file: $file)
+  }
+`;
+export class UploadImageComponent extends React.Component<
+  Partial<ReactApollo.MutationProps<UploadImageMutation, UploadImageVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<UploadImageMutation, UploadImageVariables>
+        mutation={UploadImageDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type UploadImageProps<TChildProps = any> = Partial<
+  ReactApollo.MutateProps<UploadImageMutation, UploadImageVariables>
+> &
+  TChildProps;
+export type UploadImageMutationFn = ReactApollo.MutationFn<
+  UploadImageMutation,
+  UploadImageVariables
+>;
+export function UploadImageHOC<TProps, TChildProps = any>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        UploadImageMutation,
+        UploadImageVariables,
+        UploadImageProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.graphql<
+    TProps,
+    UploadImageMutation,
+    UploadImageVariables,
+    UploadImageProps<TChildProps>
+  >(UploadImageDocument, operationOptions);
+}
+export const DeleteImageDocument = gql`
+  mutation DeleteImage($publicId: String!, $calendarId: String!) {
+    deleteImage(publicId: $publicId, calendarId: $calendarId)
+  }
+`;
+export class DeleteImageComponent extends React.Component<
+  Partial<ReactApollo.MutationProps<DeleteImageMutation, DeleteImageVariables>>
+> {
+  render() {
+    return (
+      <ReactApollo.Mutation<DeleteImageMutation, DeleteImageVariables>
+        mutation={DeleteImageDocument}
+        {...(this as any)["props"] as any}
+      />
+    );
+  }
+}
+export type DeleteImageProps<TChildProps = any> = Partial<
+  ReactApollo.MutateProps<DeleteImageMutation, DeleteImageVariables>
+> &
+  TChildProps;
+export type DeleteImageMutationFn = ReactApollo.MutationFn<
+  DeleteImageMutation,
+  DeleteImageVariables
+>;
+export function DeleteImageHOC<TProps, TChildProps = any>(
+  operationOptions:
+    | ReactApollo.OperationOption<
+        TProps,
+        DeleteImageMutation,
+        DeleteImageVariables,
+        DeleteImageProps<TChildProps>
+      >
+    | undefined
+) {
+  return ReactApollo.graphql<
+    TProps,
+    DeleteImageMutation,
+    DeleteImageVariables,
+    DeleteImageProps<TChildProps>
+  >(DeleteImageDocument, operationOptions);
 }
 export const GetCalendarByUuidDocument = gql`
   query GetCalendarByUuid($uuid: String!) {
@@ -314,6 +536,7 @@ export const GetCalendarByIdDocument = gql`
       name
       year
       uuid
+      image_url
       doors {
         id
         day
@@ -356,64 +579,6 @@ export function GetCalendarByIdHOC<TProps, TChildProps = any>(
     GetCalendarByIdVariables,
     GetCalendarByIdProps<TChildProps>
   >(GetCalendarByIdDocument, operationOptions);
-}
-export const SaveCalendarMetaDataDocument = gql`
-  mutation SaveCalendarMetaData(
-    $id: ID!
-    $name: String!
-    $year: Int!
-    $uuid: String!
-  ) {
-    saveCalendarMetaData(id: $id, name: $name, year: $year, uuid: $uuid)
-  }
-`;
-export class SaveCalendarMetaDataComponent extends React.Component<
-  Partial<
-    ReactApollo.MutationProps<
-      SaveCalendarMetaDataMutation,
-      SaveCalendarMetaDataVariables
-    >
-  >
-> {
-  render() {
-    return (
-      <ReactApollo.Mutation<
-        SaveCalendarMetaDataMutation,
-        SaveCalendarMetaDataVariables
-      >
-        mutation={SaveCalendarMetaDataDocument}
-        {...(this as any)["props"] as any}
-      />
-    );
-  }
-}
-export type SaveCalendarMetaDataProps<TChildProps = any> = Partial<
-  ReactApollo.MutateProps<
-    SaveCalendarMetaDataMutation,
-    SaveCalendarMetaDataVariables
-  >
-> &
-  TChildProps;
-export type SaveCalendarMetaDataMutationFn = ReactApollo.MutationFn<
-  SaveCalendarMetaDataMutation,
-  SaveCalendarMetaDataVariables
->;
-export function SaveCalendarMetaDataHOC<TProps, TChildProps = any>(
-  operationOptions:
-    | ReactApollo.OperationOption<
-        TProps,
-        SaveCalendarMetaDataMutation,
-        SaveCalendarMetaDataVariables,
-        SaveCalendarMetaDataProps<TChildProps>
-      >
-    | undefined
-) {
-  return ReactApollo.graphql<
-    TProps,
-    SaveCalendarMetaDataMutation,
-    SaveCalendarMetaDataVariables,
-    SaveCalendarMetaDataProps<TChildProps>
-  >(SaveCalendarMetaDataDocument, operationOptions);
 }
 export const UpdateDoorsDocument = gql`
   mutation UpdateDoors($doors: [DoorInput!]) {
@@ -462,6 +627,7 @@ export const GetCalendarsDocument = gql`
     calendars {
       id
       name
+      image_url
     }
   }
 `;
@@ -548,6 +714,7 @@ export const CalendarCreatedDocument = gql`
       calendar {
         id
         name
+        image_url
       }
     }
   }
