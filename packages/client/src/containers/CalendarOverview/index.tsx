@@ -1,10 +1,9 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import gql from 'graphql-tag';
 import React, { Fragment, PureComponent } from 'react';
 import { ChildDataProps } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
 
+import { Link } from 'react-router-dom';
 import CreateCalendarForm from '../../components/CreateCalendarForm';
 import {
   CalendarCreatedSubscription,
@@ -15,7 +14,7 @@ import {
   GetCalendarsQuery,
   GetCalendarsVariables
 } from '../../generated/components';
-import './CalendarOverview.scss';
+// import './CalendarOverview.scss';
 
 type IProps = ChildDataProps<RouteComponentProps, GetCalendarsQuery, GetCalendarsVariables>;
 
@@ -36,35 +35,57 @@ class CalendarOverview extends PureComponent<IProps> {
     const { calendars } = this.props.data;
     return (
       <Fragment>
-        <div className="row">
-          <CreateCalendarForm />
-        </div>
-        <div className="row list">
-          <div className="list__header">
-            <h1>Meine Kalender</h1>
+        <section className="section">
+          <div className="row">
+            <div className="col s12 m6 l4">
+              <h4>Kalender anlegen</h4>
+              <CreateCalendarForm />
+            </div>
           </div>
-          <div className="list__content">
-            {calendars.map(calendar => {
-              return (
-                <DeleteCalendarComponent key={calendar.id} mutation={DELETE_CALENDAR} variables={{ id: calendar.id }}>
-                  {(deleteCalendar, res) => {
-                    return (
-                      <div key={calendar.id} className="list__item">
-                        <button type="button" className="button__delete" onClick={deleteCalendar as any}>
-                          DELETE
-                        </button>
-                        <Link to={`/calendar/edit/${calendar.id}`}>
-                          <span>Kalendar für {calendar.name}</span>
-                          <FontAwesomeIcon icon="chevron-right" />
-                        </Link>
-                      </div>
-                    );
-                  }}
-                </DeleteCalendarComponent>
-              );
-            })}
+        </section>
+        <section className="section">
+          <div className="row">
+            <div className="col s12">
+              <div className="list__header">
+                <h4>Meine Kalender</h4>
+              </div>
+              <div className="list__content">
+                {calendars.map(calendar => {
+                  return (
+                    <DeleteCalendarComponent
+                      key={calendar.id}
+                      mutation={DELETE_CALENDAR}
+                      variables={{ id: calendar.id }}
+                    >
+                      {(deleteCalendar, res) => {
+                        return (
+                          <div className="col s12 m6 l4">
+                            <div className="card" key={JSON.stringify(calendar)}>
+                              <div className="card-image">
+                                <img src={calendar.image_url || 'https://unsplash.it/1350/820'} />
+                              </div>
+                              <div className="card-content">
+                                <span className="card-title">Kalendar für {calendar.name}</span>
+                              </div>
+                              <div className="card-action">
+                                <Link to={`/calendar/edit/${calendar.id}`}>
+                                  <span>Bearbeiten</span>
+                                </Link>
+                                <Link to={`#`}>
+                                  <span onClick={deleteCalendar as any}>Löschen</span>
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }}
+                    </DeleteCalendarComponent>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
       </Fragment>
     );
   }
@@ -118,6 +139,7 @@ export const GET_CALENDARS = gql`
     calendars {
       id
       name
+      image_url
     }
   }
 `;
@@ -134,6 +156,7 @@ export const CALENDAR_CREATED = gql`
       calendar {
         id
         name
+        image_url
       }
     }
   }

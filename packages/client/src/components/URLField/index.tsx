@@ -1,37 +1,29 @@
-import { Field, FieldProps, FormikProps } from 'formik';
+import classNames from 'classnames';
+import { Field } from 'formik';
 import React from 'react';
 import uuid from 'uuid/v4';
 
-import './URLField.scss';
+// import './URLField.scss';
 
 interface IProps {
   name: string;
+  url: string;
+  setFieldValue: (name: string, value: string) => void;
 }
 
-const URLField = (props: IProps & FormikProps<IProps>) => {
+const URLField = (props: IProps) => {
   const onClick = () => {
     props.setFieldValue(props.name, `http://localhost:3000/calendar/${uuid()}`);
   };
-
   return (
-    <div className="row urlFieldRow">
-      <Field name={props.name}>
-        {({ field }: FieldProps) => {
-          return (
-            <div className="input-field url-field">
-              {props.values[props.name] !== '' && <label htmlFor={props.name}>öffentliche URL (optional)</label>}
-              <input
-                id={props.name}
-                {...field}
-                type="text"
-                disabled={true}
-                placeholder={'öffentliche URL (optional)'}
-              />
-            </div>
-          );
-        }}
-      </Field>
-      <button type="button" onClick={onClick}>
+    <div className="row">
+      <div className="input-field">
+        <Field id={props.name} name={props.name} disabled={true} />
+        <label className={classNames({ active: props.url !== '' })} htmlFor={props.name}>
+          öffentlicher Link (optional)
+        </label>
+      </div>
+      <button type="button" onClick={onClick} className="waves-effect waves-light btn">
         URL erzeugen
       </button>
     </div>

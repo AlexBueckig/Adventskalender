@@ -1,27 +1,31 @@
-import classnames from 'classnames';
-import { ErrorMessage, Field, FormikProps } from 'formik';
+import classNames from 'classnames';
+import { Field } from 'formik';
 import React from 'react';
 
-import './InputField.scss';
+// import './InputField.scss';
 
-interface IProps extends FormikProps<{}> {
+interface IProps {
   name: string;
-  placeholder?: string;
+  placeholder: string;
+  value: string;
+  type?: string;
+  error?: string;
+  touched?: boolean;
 }
 
-const InputField = ({ values, errors, name, placeholder }: IProps) => {
-  const nameSplit = name.split('.');
-  let inputText = '';
-  if (nameSplit.length === 1) {
-    inputText = values[name];
-  } else {
-    inputText = values[nameSplit[0]][nameSplit[1]][nameSplit[2]];
-  }
+const InputField = ({ value, error, name, placeholder, touched, type }: IProps) => {
   return (
-    <div className={classnames('input-field', { error: errors[name] })}>
-      {placeholder && inputText !== '' && <label htmlFor={name}>{placeholder}</label>}
-      <Field id={name} name={name} placeholder={placeholder} />
-      <ErrorMessage name={name} component="span" className="error-message" />
+    <div className="input-field">
+      <Field
+        id={name}
+        name={name}
+        type={type || 'text'}
+        className={classNames({ validate: true, invalid: touched && error })}
+      />
+      <label className={classNames({ active: value !== '' })} htmlFor={name}>
+        {placeholder}
+      </label>
+      {touched && error && <span className="helper-text" data-error={error} data-success="right" />}
     </div>
   );
 };

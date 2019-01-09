@@ -1,9 +1,13 @@
+import gql from 'graphql-tag';
 import { TweenLite } from 'gsap';
 import React, { Component } from 'react';
 
+import { OpenDoorHOC, OpenDoorMutation, OpenDoorVariables } from '../../generated/components';
+
+import { ChildMutateProps } from 'react-apollo';
 import './Door.scss';
 
-interface IProps {
+interface IComponentProps {
   id: string;
   day: string;
   message: string;
@@ -11,13 +15,15 @@ interface IProps {
   offset: { left: number; top: number; width: number; height: number };
 }
 
+type IProps = ChildMutateProps<IComponentProps, OpenDoorMutation, OpenDoorVariables>;
+
 interface IState {
   left: number;
   top: number;
 }
 
 class Door extends Component<IProps, IState> {
-  public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
+  public static getDerivedStateFromProps(nextProps: any, prevState: any) {
     return {
       left: -Math.abs(prevState.left + nextProps.offset.left),
       top: -Math.abs(prevState.top + nextProps.offset.top)
@@ -47,8 +53,8 @@ class Door extends Component<IProps, IState> {
 
     if (this.door !== null) {
       this.setState({
-        left: -Math.abs(this.door.getBoundingClientRect().left),
-        top: -Math.abs(this.door.getBoundingClientRect().top)
+        left: -Math.abs(this.door.getBoundingClientRect().left + this.props.offset.left),
+        top: -Math.abs(this.door.getBoundingClientRect().top + this.props.offset.top)
       });
     }
   }
@@ -57,6 +63,7 @@ class Door extends Component<IProps, IState> {
     if (!this.props.isOpen) {
       TweenLite.to(this.door, 1, { rotationY: -180 });
     }
+    this.props.mutate({ variables: { doorId: this.props.id } });
   };
 
   public onDoorBackClick = () => {
@@ -88,4 +95,10 @@ class Door extends Component<IProps, IState> {
   }
 }
 
-export default Door;
+export const OPEN_DOOR = gql`
+  mutation OpenDoor($doorId: ID!) {
+    openDoor(doorId: $doorId)
+  }
+`;
+
+export default OpenDoorHOC<IComponentProps>({})(Door);

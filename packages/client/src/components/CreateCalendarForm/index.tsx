@@ -5,16 +5,11 @@ import { ChildMutateProps } from 'react-apollo';
 import * as yup from 'yup';
 
 import { CreateCalendarHOC, CreateCalendarMutation, CreateCalendarVariables } from '../../generated/components';
-import { IError } from '../../types.d';
-import InputField from '../InputField';
 
+import InputField from '../InputField';
 import './CreateCalendarForm.scss';
 
 type IProps = ChildMutateProps<{}, CreateCalendarMutation, CreateCalendarVariables>;
-
-interface IState {
-  error: IError;
-}
 
 const validationSchema = yup.object().shape({
   name: yup
@@ -24,24 +19,31 @@ const validationSchema = yup.object().shape({
     .max(255)
 });
 
-class CreateCalendarForm extends PureComponent<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = { error: undefined };
-  }
-
+class CreateCalendarForm extends PureComponent<IProps> {
   public render() {
     return (
-      <Formik initialValues={{ name: '' }} onSubmit={this.handleSubmit} validationSchema={validationSchema}>
-        {props => {
-          return (
-            <Form className="create-form">
-              <InputField name="name" placeholder="Name für Kalendar" {...props} />
-              <button type="submit">Save</button>
-            </Form>
-          );
-        }}
-      </Formik>
+      <div className="card-panel">
+        <Formik initialValues={{ name: '' }} onSubmit={this.handleSubmit} validationSchema={validationSchema}>
+          {({ values, errors, touched }) => {
+            return (
+              <Form>
+                <InputField
+                  value={values.name}
+                  name="name"
+                  placeholder="Name"
+                  touched={touched.name}
+                  error={errors.name}
+                />
+                <div className="right-align">
+                  <button className="waves-effect waves-light btn" type="submit">
+                    Submit
+                  </button>
+                </div>
+              </Form>
+            );
+          }}
+        </Formik>
+      </div>
     );
   }
 
@@ -50,17 +52,12 @@ class CreateCalendarForm extends PureComponent<IProps, IState> {
     { setSubmitting }: FormikActions<CreateCalendarVariables>
   ) => {
     setSubmitting(false);
-    // alert(JSON.stringify(values, null, 2));
     try {
       await this.props.mutate({
         variables: values
       });
     } catch (err) {
-      const error = err
-        .toString()
-        .replace('Error: ', '')
-        .split(': ');
-      this.setState({ error: { type: error[0], message: error[1] } });
+      M.toast({ html: err.message.replace('GraphQL Error', '') });
     }
   };
 }

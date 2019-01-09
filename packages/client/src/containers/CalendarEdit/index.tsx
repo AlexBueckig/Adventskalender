@@ -1,44 +1,39 @@
 import { FieldArray, Form, Formik, FormikActions } from 'formik';
+import { ExecutionResult } from 'graphql';
 import gql from 'graphql-tag';
 import React, { Fragment, PureComponent } from 'react';
-import { ChildDataProps, ChildMutateProps, compose } from 'react-apollo';
+import { ChildDataProps, compose, MutationOptions } from 'react-apollo';
 import { RouteChildrenProps } from 'react-router';
-import * as yup from 'yup';
 
+import CalendarMetaDataForm from '../../components/CalendarMetaDataForm';
 import DoorItems from '../../components/DoorItems';
-import DropDown from '../../components/DropDown';
-import InputField from '../../components/InputField';
-import URLField from '../../components/URLField';
 import {
   GetCalendarByIdDoors,
   GetCalendarByIdHOC,
   GetCalendarByIdQuery,
   GetCalendarByIdVariables,
-  SaveCalendarMetaDataHOC,
-  SaveCalendarMetaDataMutation,
-  SaveCalendarMetaDataVariables,
   UpdateDoorsHOC,
   UpdateDoorsMutation,
   UpdateDoorsVariables
 } from '../../generated/components';
 
-import './CalendarEdit.scss';
-
-const validationSchema = yup.object().shape({
-  name: yup.string().required()
-});
+import UploadImageForm from '../../components/UploadImageForm';
+// import './CalendarEdit.scss';
 
 interface IDoorsProps {
   doors: GetCalendarByIdDoors[];
 }
 
-// TODO: Typing korrigieren
-type IProps = ChildMutateProps<
-  RouteChildrenProps<{ id: string }>,
-  SaveCalendarMetaDataMutation | UpdateDoorsMutation,
-  SaveCalendarMetaDataVariables | UpdateDoorsVariables
+interface IMutationFns {
+  updateDoors: (options: MutationOptions<UpdateDoorsVariables>) => Promise<ExecutionResult<UpdateDoorsMutation>>;
+}
+
+type IProps = ChildDataProps<
+  RouteChildrenProps<GetCalendarByIdVariables>,
+  GetCalendarByIdQuery,
+  GetCalendarByIdVariables
 > &
-  ChildDataProps<RouteChildrenProps<GetCalendarByIdVariables>, GetCalendarByIdQuery, GetCalendarByIdVariables>;
+  IMutationFns;
 
 class CalendarEdit extends PureComponent<IProps> {
   public render() {
@@ -50,79 +45,48 @@ class CalendarEdit extends PureComponent<IProps> {
 
     return (
       <Fragment>
-        <section>
-          <h2>Kalender</h2>
-          <Formik
-            initialValues={{
-              id: calendar.id,
-              name: calendar.name,
-              uuid: `http://localhost:3000/calendar/${calendar.uuid}`,
-              year: calendar.year
-            }}
-            onSubmit={this.handleSubmit}
-            validationSchema={validationSchema}
-          >
-            {formikProps => {
-              const year = new Date().getFullYear();
-              return (
-                <Form className="form calendarMetaForm">
-                  <div className="row calendarMetaFormRow">
-                    <span>Kalendar für</span>
-                    <InputField name="name" {...formikProps} />
-                    <span>für das Jahr</span>
-                    <DropDown
-                      options={[
-                        { label: year, value: year },
-                        { label: year + 1, value: year + 1 },
-                        { label: year + 2, value: year + 2 }
-                      ]}
-                      name="year"
-                      onChange={formikProps.setFieldValue}
-                      onBlur={formikProps.setFieldTouched}
-                      value={formikProps.values.year}
-                    />
-                    <span>!</span>
-                  </div>
-                  <URLField name="uuid" {...formikProps} />
-                  <button type="submit">Speichern</button>
-                </Form>
-              );
-            }}
-          </Formik>
+        <section className="section">
+          <div className="row">
+            <div className="col s12 l7">
+              <h5>Kalender</h5>
+              <CalendarMetaDataForm calendar={calendar} />
+            </div>
+            <div className="col s12 l5">
+              <h5>Hintergrundbild</h5>
+              <UploadImageForm
+                calendarId={calendar.id}
+                image_url={calendar.image_url}
+                refetch={this.props.data.refetch}
+              />
+            </div>
+          </div>
         </section>
-        <section>
-          <h2>Kalendertage</h2>
-          <Formik initialValues={{ doors: calendar.doors || [] }} onSubmit={this.handleDoorsSubmit}>
-            {formikProps => {
-              return (
-                <Form className="form doorsForm">
-                  <FieldArray name="doors">{() => <DoorItems {...formikProps} />}</FieldArray>
-                  <button type="submit">Speichern</button>
-                </Form>
-              );
-            }}
-          </Formik>
+        <section className="section">
+          <div className="row">
+            <div className="col s12">
+              <h5>Kalendertage</h5>
+              <div className="card-panel">
+                <Formik initialValues={{ doors: calendar.doors || [] }} onSubmit={this.handleDoorsSubmit}>
+                  {formikProps => {
+                    return (
+                      <Form>
+                        <FieldArray name="doors">{() => <DoorItems {...formikProps} />}</FieldArray>
+                        <div className="right-align">
+                          <button className="waves-effect waves-light btn" type="submit">
+                            Speichern
+                          </button>
+                        </div>
+                      </Form>
+                    );
+                  }}
+                </Formik>
+              </div>
+            </div>
+          </div>
         </section>
       </Fragment>
     );
   }
-
-  private handleSubmit = (
-    values: SaveCalendarMetaDataVariables,
-    { setSubmitting }: FormikActions<SaveCalendarMetaDataVariables>
-  ) => {
-    setSubmitting(false);
-    alert(JSON.stringify(values, null, 2));
-    // @ts-ignore
-    this.props.saveCalendarMetaData({
-      variables: {
-        id: values.id,
-        name: values.name,
-        year: parseInt(`${values.year}`, 10),
-        uuid: values.uuid.replace('http://localhost:3000/calendar/', '')
-      }
-    });
-  };
 
   private handleDoorsSubmit = (values: IDoorsProps, { setSubmitting }: FormikActions<IDoorsProps>) => {
     setSubmitting(false);
@@ -136,11 +100,13 @@ class CalendarEdit extends PureComponent<IProps> {
         doors.push({ id: door.id, message: door.message });
       }
     });
-
-    // @ts-ignore
-    this.props.updateDoors({
-      variables: { doors }
-    });
+    try {
+      this.props.updateDoors({
+        variables: { doors }
+      });
+    } catch (err) {
+      M.toast({ html: err.message.replace('GraphQL Error', '') });
+    }
   };
 }
 
@@ -151,18 +117,13 @@ export const GET_CALENDAR_BY_ID = gql`
       name
       year
       uuid
+      image_url
       doors {
         id
         day
         message
       }
     }
-  }
-`;
-
-export const SAVE_CALENDAR_META_DATA = gql`
-  mutation SaveCalendarMetaData($id: ID!, $name: String!, $year: Int!, $uuid: String!) {
-    saveCalendarMetaData(id: $id, name: $name, year: $year, uuid: $uuid)
   }
 `;
 
@@ -174,7 +135,6 @@ export const UPDATE_DOORS = gql`
 
 export default compose(
   UpdateDoorsHOC({ name: 'updateDoors' }),
-  SaveCalendarMetaDataHOC({ name: 'saveCalendarMetaData' }),
   GetCalendarByIdHOC({
     options: (props: RouteChildrenProps<GetCalendarByIdVariables>) => {
       if (props.match) {

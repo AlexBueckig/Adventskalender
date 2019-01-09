@@ -22,9 +22,9 @@ export default class DoorItems extends PureComponent<FormikProps<{ doors: GetCal
               <div key={door.id} className="doors__item">
                 <InputField
                   name={`doors.${index}.message`}
-                  values={door}
+                  value={door.message}
                   placeholder={`Tür ${index + 1}`}
-                  {...this.props}
+                  type="text"
                 />
               </div>
             );
