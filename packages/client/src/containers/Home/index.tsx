@@ -8,7 +8,6 @@ import { Link, withRouter } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import * as yup from 'yup';
 
-import DivWithErrorHandling from '../../error/DivWithErrorHandling';
 import { SignInHOC, SignInMutation, SignInVariables } from '../../generated/components';
 
 // import './Home.scss';
@@ -37,52 +36,48 @@ class Home extends PureComponent<IProps, IState> {
   public render() {
     return (
       <section className="section">
-        <DivWithErrorHandling errorMessage={this.state.error}>
-          <div className="row">
-            <div className="col s12 m6 offset-m3 l4 offset-l4 center">
-              <div className="card-panel">
-                <Formik
-                  initialValues={{ login: 'test', password: 'test' }}
-                  onSubmit={this.handleSubmit}
-                  validationSchema={validationSchema}
-                >
-                  {({ values, errors }) => (
-                    <Form className="form">
-                      <div className="input-field">
-                        <Field
-                          id="login"
-                          name="login"
-                          type="text"
-                          className={classNames({ validate: true, invalid: errors.login })}
-                        />
-                        <label className={classNames({ active: values.login !== '' })} htmlFor="login">
-                          Benutzername
-                        </label>
-                        {errors.login && (
-                          <span className="helper-text" data-error={errors.login} data-success="right" />
-                        )}
-                      </div>
-                      <div className="input-field">
-                        <Field id="password" name="password" type="password" />
-                        <label className={classNames({ active: values.password !== '' })} htmlFor="password">
-                          Passwort
-                        </label>
-                      </div>
-                      <button className="waves-effect waves-light btn" type="submit">
-                        Submit
-                      </button>
-                    </Form>
-                  )}
-                </Formik>
-              </div>
+        <div className="row">
+          <div className="col s12 m6 offset-m3 l4 offset-l4 center">
+            <div className="card-panel">
+              <Formik
+                initialValues={{ login: 'test', password: 'test' }}
+                onSubmit={this.handleSubmit}
+                validationSchema={validationSchema}
+              >
+                {({ values, errors }) => (
+                  <Form className="form">
+                    <div className="input-field">
+                      <Field
+                        id="login"
+                        name="login"
+                        type="text"
+                        className={classNames({ validate: true, invalid: errors.login })}
+                      />
+                      <label className={classNames({ active: values.login !== '' })} htmlFor="login">
+                        Benutzername
+                      </label>
+                      {errors.login && <span className="helper-text" data-error={errors.login} data-success="right" />}
+                    </div>
+                    <div className="input-field">
+                      <Field id="password" name="password" type="password" />
+                      <label className={classNames({ active: values.password !== '' })} htmlFor="password">
+                        Passwort
+                      </label>
+                    </div>
+                    <button className="waves-effect waves-light btn" type="submit">
+                      Submit
+                    </button>
+                  </Form>
+                )}
+              </Formik>
             </div>
           </div>
-          <div className="row">
-            <div className="center">
-              <Link to="/register/">Account erstellen</Link>
-            </div>
+        </div>
+        <div className="row">
+          <div className="center">
+            <Link to="/register/">Account erstellen</Link>
           </div>
-        </DivWithErrorHandling>
+        </div>
       </section>
     );
   }
