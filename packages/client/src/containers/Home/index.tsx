@@ -1,23 +1,22 @@
-import { Form, Formik, FormikActions } from 'formik';
+import classNames from 'classnames';
+import { Field, Form, Formik, FormikActions } from 'formik';
 import gql from 'graphql-tag';
-import React, { Fragment, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { ChildMutateProps } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Link, withRouter } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import * as yup from 'yup';
 
-import Error from '../../components/Error';
+import DivWithErrorHandling from '../../error/DivWithErrorHandling';
 import { SignInHOC, SignInMutation, SignInVariables } from '../../generated/components';
-import { IError } from '../../types.d';
 
-import InputField from '../../components/InputField';
-import './Home.scss';
+// import './Home.scss';
 
 type IProps = ChildMutateProps<RouteComponentProps, SignInMutation, SignInVariables>;
 
 interface IState {
-  error: IError;
+  error: string | undefined;
 }
 
 const validationSchema = yup.object().shape({
@@ -37,35 +36,54 @@ class Home extends PureComponent<IProps, IState> {
 
   public render() {
     return (
-      <Fragment>
-        <div style={{ textAlign: 'center' }}>
-          {this.state.error && <Error error={this.state.error} />}
-          <Formik
-            initialValues={{ login: 'test', password: 'test' }}
-            onSubmit={this.handleSubmit}
-            validationSchema={validationSchema}
-          >
-            {props => (
-              <Form className="form">
-                <div className="row">
-                  <InputField name="login" placeholder="Login" {...props} />
-                </div>
-                <div className="row">
-                  <InputField name="password" placeholder="Passwort" {...props} />
-                </div>
-                <div className="row">
-                  <button type="submit" className="button">
-                    LOGIN
-                  </button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </div>
-        <div className="link">
-          <Link to="/register/">Account erstellen</Link>
-        </div>
-      </Fragment>
+      <section className="section">
+        <DivWithErrorHandling errorMessage={this.state.error}>
+          <div className="row">
+            <div className="col s12 m6 offset-m3 l4 offset-l4 center">
+              <div className="card-panel">
+                <Formik
+                  initialValues={{ login: 'test', password: 'test' }}
+                  onSubmit={this.handleSubmit}
+                  validationSchema={validationSchema}
+                >
+                  {({ values, errors }) => (
+                    <Form className="form">
+                      <div className="input-field">
+                        <Field
+                          id="login"
+                          name="login"
+                          type="text"
+                          className={classNames({ validate: true, invalid: errors.login })}
+                        />
+                        <label className={classNames({ active: values.login !== '' })} htmlFor="login">
+                          Benutzername
+                        </label>
+                        {errors.login && (
+                          <span className="helper-text" data-error={errors.login} data-success="right" />
+                        )}
+                      </div>
+                      <div className="input-field">
+                        <Field id="password" name="password" type="password" />
+                        <label className={classNames({ active: values.password !== '' })} htmlFor="password">
+                          Passwort
+                        </label>
+                      </div>
+                      <button className="waves-effect waves-light btn" type="submit">
+                        Submit
+                      </button>
+                    </Form>
+                  )}
+                </Formik>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="center">
+              <Link to="/register/">Account erstellen</Link>
+            </div>
+          </div>
+        </DivWithErrorHandling>
+      </section>
     );
   }
 
@@ -87,11 +105,7 @@ class Home extends PureComponent<IProps, IState> {
         this.props.history.push('/calendars');
       }
     } catch (err) {
-      const error = err
-        .toString()
-        .replace('Error: ', '')
-        .split(': ');
-      this.setState({ error: { type: error[0], message: error[1] } });
+      console.log(err);
     }
   };
 }
