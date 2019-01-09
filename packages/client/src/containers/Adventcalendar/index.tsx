@@ -40,7 +40,7 @@ class Adventcalendar extends PureComponent<IProps, IState> {
     }
     const doors = this.props.data.getCalendarByUuid.doors;
     return (
-      <section id="calendar" ref={this.handleRef}>
+      <section className="section" id="calendar" ref={this.handleRef}>
         {doors.map(door => (
           <Door key={door.id} id={door.id} day={door.day} message={door.message} isOpen={door.open} offset={offset} />
         ))}
