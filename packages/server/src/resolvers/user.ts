@@ -1,4 +1,4 @@
-import { AuthenticationError, UserInputError } from 'apollo-server';
+import { ApolloError, AuthenticationError, UserInputError } from 'apollo-server';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 
@@ -20,14 +20,18 @@ export const userQueryResolver: QueryResolvers.Resolvers = {
     return await models.User.findAll();
   },
   user: async (parent, args, { models }) => {
-    return await models.User.findById(args.id);
+    return await models.User.findByPk(args.id);
   }
 };
 
 export const userMutationResolver: MutationResolvers.Resolvers = {
   signUp: async (parent, args, { models, secret }) => {
-    const user = await models.User.create(args);
-    return { token: createToken(user, secret, '30m') };
+    try {
+      const user = await models.User.create(args);
+      return { token: createToken(user, secret, '30m') };
+    } catch (error) {
+      throw new ApolloError('Saving failed... Please try again...', 'SAVING_FAILED');
+    }
   },
   signIn: async (parent, { login, password }, { models, secret }) => {
     let user = await models.User.findOne({
@@ -41,13 +45,13 @@ export const userMutationResolver: MutationResolvers.Resolvers = {
     }
 
     if (!user) {
-      throw new UserInputError('No user found with this login credentials.');
+      throw new AuthenticationError('Invalid login credentials.');
     }
 
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
-      throw new AuthenticationError('Invalid password.');
+      throw new AuthenticationError('Invalid login credentials.');
     }
 
     return { token: createToken(user, secret, '24h') };
@@ -56,6 +60,10 @@ export const userMutationResolver: MutationResolvers.Resolvers = {
 
 export const userResolver: UserResolvers.Resolvers = {
   calendars: async (parent, args, { models }) => {
-    return await parent.getCalendars();
+    try {
+      return await parent.getCalendars();
+    } catch (err) {
+      throw err;
+    }
   }
 };

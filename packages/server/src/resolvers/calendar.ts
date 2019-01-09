@@ -1,3 +1,4 @@
+import { ApolloError } from 'apollo-server';
 import {
   CalendarResolvers,
   MutationResolvers,
@@ -9,15 +10,36 @@ import { isAuthenticated } from './authorization';
 
 export const calendarQueryResolver: QueryResolvers.Resolvers = {
   calendars: async (parent, args, { models, me }) => {
-    isAuthenticated(me);
-    return await models.Calendar.findAll({ where: { userId: me.id } });
+    try {
+      isAuthenticated(me);
+      return await models.Calendar.findAll({ where: { userId: me.id } });
+    } catch (err) {
+      throw err;
+    }
   },
   calendar: async (parent, args, { me, models }) => {
-    isAuthenticated(me);
-    return await models.Calendar.findById(args.id);
+    try {
+      isAuthenticated(me);
+      const calendar = await models.Calendar.findByPk(args.id);
+      if (calendar) {
+        return calendar;
+      } else {
+        throw new ApolloError('Calendar not found', 'NOT_FOUND');
+      }
+    } catch (err) {
+      throw err;
+    }
   },
   getCalendarByUuid: async (parent, args, { me, models }) => {
-    return await models.Calendar.findOne({ where: { uuid: args.uuid } });
+    try {
+      const calendar = await models.Calendar.findOne({ where: { uuid: args.uuid } });
+      if (calendar) {
+        return calendar;
+      }
+      throw new ApolloError('Calendar not found...', 'NOT_FOUND');
+    } catch (err) {
+      throw err;
+    }
   }
 };
 
@@ -31,50 +53,81 @@ const createInitialDoors = (calendarId: number) => {
 
 export const calendarMutationResolver: MutationResolvers.Resolvers = {
   createCalendar: async (parent, args, { models, me }) => {
-    // return await models.Calendar.create({ name: args.name, userId: 1 });
-    const calendar = await models.Calendar.create({ name: args.name, userId: me.id });
-    await models.Door.bulkCreate(createInitialDoors(calendar.id));
+    try {
+      const calendar = await models.Calendar.create({ name: args.name, userId: me.id });
+      await models.Door.bulkCreate(createInitialDoors(calendar.id));
 
-    pubsub.publish(EVENTS.CALENDAR.CREATED, {
-      calendarCreated: { calendar }
-    });
-
-    return calendar;
+      pubsub.publish(EVENTS.CALENDAR.CREATED, {
+        calendarCreated: { calendar }
+      });
+      if (calendar) {
+        return calendar;
+      }
+      throw new ApolloError('Saving failed... Please try again...', 'SAVING_FAILED');
+    } catch (error) {
+      throw error;
+    }
   },
   deleteCalendar: async (parent, args, { models, me }) => {
-    const status = (await models.Calendar.destroy({ where: { id: args.id, userId: me.id } })) === 1;
+    try {
+      const status = (await models.Calendar.destroy({ where: { id: args.id, userId: me.id } })) === 1;
 
-    if (status) {
-      pubsub.publish(EVENTS.CALENDAR.DELETED, {
-        calendarDeleted: { id: args.id }
-      });
+      if (status) {
+        pubsub.publish(EVENTS.CALENDAR.DELETED, {
+          calendarDeleted: { id: args.id }
+        });
+        return status;
+      }
+      throw new ApolloError('Deleting failed... Please try again...', 'DELETING_FAILED');
+    } catch (error) {
+      throw error;
     }
-
-    return status;
   },
   saveCalendarMetaData: async (parent, args, { models, me }) => {
-    const updated = (await models.Calendar.update({ ...args }, { where: { userId: 1 } }))[0] === 1;
-    return updated;
+    try {
+      const updated =
+        (await models.Calendar.update(
+          { name: args.name, uuid: args.uuid, year: args.year },
+          { where: { userId: 1, id: args.id } }
+        ))[0] === 1;
+      return updated;
+    } catch (error) {
+      throw new ApolloError('Saving failed... Please try again...', 'SAVING_FAILED');
+    }
   }
 };
 
 export const calendarResolver: CalendarResolvers.Resolvers = {
   doors: async (parent, args, { models }) => {
-    return await parent.getDoors();
+    try {
+      const doors = await parent.getDoors();
+      if (doors) {
+        return doors;
+      }
+      throw new ApolloError('Doors not found...', 'NOT_FOUND');
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
 export const calendarSubscriptionResolver: SubscriptionResolvers.Resolvers = {
   calendarCreated: {
     subscribe: () => {
-      console.log('calendarCreated');
-      return pubsub.asyncIterator(EVENTS.CALENDAR.CREATED);
+      try {
+        return pubsub.asyncIterator(EVENTS.CALENDAR.CREATED);
+      } catch (error) {
+        throw new ApolloError("Couldn't subscribe to websocket...", 'SUBSCRIPTION_FAILED');
+      }
     }
   },
   calendarDeleted: {
     subscribe: () => {
-      console.log('calendarDeleted');
-      return pubsub.asyncIterator(EVENTS.CALENDAR.DELETED);
+      try {
+        return pubsub.asyncIterator(EVENTS.CALENDAR.DELETED);
+      } catch (error) {
+        throw new ApolloError("Couldn't subscribe to websocket...", 'SUBSCRIPTION_FAILED');
+      }
     }
   }
 };
