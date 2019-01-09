@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 import { Context } from 'apollo-server-core';
 import { ApolloServer, AuthenticationError } from 'apollo-server-express';
+import * as cloudinary from 'cloudinary';
 import * as express from 'express';
 import { IncomingMessage } from 'http';
 import * as http from 'http';
