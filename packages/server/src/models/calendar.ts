@@ -14,8 +14,10 @@ export default (sequelize: Sequelize, DataTypes: IDataTypes) => {
       defaultValue: new Date().getFullYear()
     },
     uuid: {
-      type: DataTypes.STRING,
-      defaultValue: ''
+      type: DataTypes.UUID
+    },
+    image_url: {
+      type: DataTypes.STRING
     }
   });
 

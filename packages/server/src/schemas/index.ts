@@ -2,6 +2,7 @@ import { gql } from 'apollo-server-express';
 
 import calendarSchema from './calendar';
 import doorSchema from './door';
+import uploadSchema from './upload';
 import userSchema from './user';
 
 const linkSchema = gql`
@@ -16,4 +17,4 @@ const linkSchema = gql`
   }
 `;
 
-export default [linkSchema, userSchema, calendarSchema, doorSchema];
+export default [linkSchema, userSchema, calendarSchema, doorSchema, uploadSchema];

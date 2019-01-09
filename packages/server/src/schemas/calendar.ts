@@ -10,15 +10,16 @@ export default gql`
   extend type Mutation {
     createCalendar(name: String!): Calendar!
     deleteCalendar(id: ID!): Boolean!
-    saveCalendarMetaData(id: ID!, name: String!, year: Int!, uuid: String!): Boolean!
+    saveCalendarMetaData(id: ID!, name: String!, year: Int!, uuid: String): Boolean!
   }
 
   type Calendar {
     id: ID!
     name: String!
     year: Int!
-    uuid: String!
+    uuid: String
     doors: [Door!]
+    image_url: String
   }
 
   extend type Subscription {

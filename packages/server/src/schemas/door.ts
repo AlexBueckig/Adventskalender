@@ -8,6 +8,7 @@ export default gql`
   extend type Mutation {
     createDoor(day: String!, message: String!, calendarId: ID!): Door
     updateDoors(doors: [DoorInput!]): Boolean!
+    openDoor(doorId: ID!): Boolean!
   }
 
   input DoorInput {
