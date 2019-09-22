@@ -84,7 +84,6 @@ class CalendarMetaDataForm extends PureComponent<IProps> {
     { setSubmitting }: FormikActions<SaveCalendarMetaDataVariables>
   ) => {
     setSubmitting(false);
-    alert(JSON.stringify(values, null, 2));
     try {
       this.props.mutate({
         variables: {

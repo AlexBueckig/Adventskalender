@@ -1,5 +1,16 @@
 @import url(https://fonts.googleapis.com/css?family=Satisfy|Material+Icons);
 
+.App {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: linear-gradient(135deg, #a1dbff 0%, #cbebff 53%, #f0f9ff 100%);
+}
+
+main {
+  flex: 1 0 auto;
+}
+
 /* @import './shared';
 
 *,

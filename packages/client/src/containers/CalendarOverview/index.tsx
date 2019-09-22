@@ -3,12 +3,11 @@ import React, { Fragment, PureComponent } from 'react';
 import { ChildDataProps } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 
-import { Link } from 'react-router-dom';
+import CalendarList from '../../components/CalendarList';
 import CreateCalendarForm from '../../components/CreateCalendarForm';
 import {
   CalendarCreatedSubscription,
   CalendarDeletedSubscription,
-  DeleteCalendarComponent,
   GetCalendarsCalendars,
   GetCalendarsHOC,
   GetCalendarsQuery,
@@ -46,43 +45,8 @@ class CalendarOverview extends PureComponent<IProps> {
         <section className="section">
           <div className="row">
             <div className="col s12">
-              <div className="list__header">
-                <h4>Meine Kalender</h4>
-              </div>
-              <div className="list__content">
-                {calendars.map(calendar => {
-                  return (
-                    <DeleteCalendarComponent
-                      key={calendar.id}
-                      mutation={DELETE_CALENDAR}
-                      variables={{ id: calendar.id }}
-                    >
-                      {(deleteCalendar, res) => {
-                        return (
-                          <div className="col s12 m6 l4">
-                            <div className="card" key={JSON.stringify(calendar)}>
-                              <div className="card-image">
-                                <img src={calendar.image_url || 'https://unsplash.it/1350/820'} />
-                              </div>
-                              <div className="card-content">
-                                <span className="card-title">Kalendar für {calendar.name}</span>
-                              </div>
-                              <div className="card-action">
-                                <Link to={`/calendar/edit/${calendar.id}`}>
-                                  <span>Bearbeiten</span>
-                                </Link>
-                                <Link to={`#`}>
-                                  <span onClick={deleteCalendar as any}>Löschen</span>
-                                </Link>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }}
-                    </DeleteCalendarComponent>
-                  );
-                })}
-              </div>
+              <h4>Meine Kalender</h4>
+              <CalendarList calendars={calendars} />
             </div>
           </div>
         </section>
@@ -141,12 +105,6 @@ export const GET_CALENDARS = gql`
       name
       image_url
     }
-  }
-`;
-
-export const DELETE_CALENDAR = gql`
-  mutation DeleteCalendar($id: ID!) {
-    deleteCalendar(id: $id)
   }
 `;
 

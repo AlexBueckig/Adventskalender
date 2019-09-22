@@ -1,45 +1,66 @@
 import M from 'materialize-css';
+// import './App.scss';
+import 'materialize-css/dist/css/materialize.min.css';
 import React from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
-
+import { Link, Redirect, Route, Switch } from 'react-router-dom';
+import Cookies from 'universal-cookie';
 import Adventcalendar from '../Adventcalendar';
 import CalendarEdit from '../CalendarEdit';
 import CalendarOverview from '../CalendarOverview';
 import Home from '../Home';
 import SignUp from '../SignUp';
-// import './App.scss';
 
-import 'materialize-css/dist/css/materialize.min.css';
+interface IProps {}
 
-class App extends React.Component {
+interface IState {
+  token: string | undefined;
+}
+
+class App extends React.Component<IProps, IState> {
+  public state = { token: undefined };
   private sidenav: HTMLElement | null = null;
 
   public componentDidMount = () => {
+    const cookies = new Cookies();
+    const token = cookies.get('token');
+    this.setState({ token });
     if (this.sidenav) {
-      // M.Sidenav.init(this.sidenav);
       M.AutoInit();
     }
   };
 
+  public logout = () => {
+    const cookies = new Cookies();
+    cookies.remove('token');
+    this.setState({ token: undefined });
+  };
+
   public render() {
+    const cookies = new Cookies();
+    const token = cookies.get('token');
     return (
       <div className="App">
         <header>
           <nav>
-            <div className="nav-wrapper">
-              <a href="/" className="brand-logo">
+            <div className="nav-wrapper blue lighten-2" style={{ paddingLeft: 16 }}>
+              <Link to="/" className="brand-logo">
                 Adventskalender
-              </a>
+              </Link>
               <a href="#" data-target="mobile-nav" className="sidenav-trigger">
                 <i className="material-icons">menu</i>
               </a>
               <ul className="right hide-on-med-and-down">
-                <li>
-                  <Link to="/calendars">Meine Kalender</Link>
-                </li>
-                <li>
-                  <a>Logout</a>
-                </li>
+                {token && (
+                  <li>
+                    <Link to="/calendars">Meine Kalender</Link>
+                  </li>
+                )}
+                {token && (
+                  <li>
+                    <a onClick={this.logout}>Logout</a>
+                  </li>
+                )}
+                {!token && <Redirect to="/" />}
               </ul>
             </div>
           </nav>
@@ -64,7 +85,16 @@ class App extends React.Component {
             </Switch>
           </div>
         </main>
-        <footer>Footer</footer>
+        <footer className="page-footer blue lighten-2">
+          <div className="footer-copyright">
+            <div className="container">
+              © 2019 Copyright by AB
+              <a className="grey-text text-lighten-4 right" href="#!">
+                Impressum
+              </a>
+            </div>
+          </div>
+        </footer>
       </div>
     );
   }

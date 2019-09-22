@@ -8,8 +8,8 @@ export interface DoorInput {
 }
 
 export enum CacheControlScope {
-  Public = "PUBLIC",
-  Private = "PRIVATE"
+  Public = 'PUBLIC',
+  Private = 'PRIVATE'
 }
 
 /** The `Upload` scalar type represents a file upload. */
@@ -27,7 +27,7 @@ export type SaveCalendarMetaDataVariables = {
 };
 
 export type SaveCalendarMetaDataMutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
 
   saveCalendarMetaData: boolean;
 };
@@ -37,13 +37,13 @@ export type CreateCalendarVariables = {
 };
 
 export type CreateCalendarMutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
 
   createCalendar: CreateCalendarCreateCalendar;
 };
 
 export type CreateCalendarCreateCalendar = {
-  __typename?: "Calendar";
+  __typename?: 'Calendar';
 
   id: string;
 
@@ -55,7 +55,7 @@ export type OpenDoorVariables = {
 };
 
 export type OpenDoorMutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
 
   openDoor: boolean;
 };
@@ -66,7 +66,7 @@ export type UploadImageVariables = {
 };
 
 export type UploadImageMutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
 
   uploadImage: string;
 };
@@ -77,7 +77,7 @@ export type DeleteImageVariables = {
 };
 
 export type DeleteImageMutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
 
   deleteImage: boolean;
 };
@@ -87,21 +87,23 @@ export type GetCalendarByUuidVariables = {
 };
 
 export type GetCalendarByUuidQuery = {
-  __typename?: "Query";
+  __typename?: 'Query';
 
   getCalendarByUuid: GetCalendarByUuidGetCalendarByUuid;
 };
 
 export type GetCalendarByUuidGetCalendarByUuid = {
-  __typename?: "Calendar";
+  __typename?: 'Calendar';
 
   name: string;
 
   doors: Maybe<GetCalendarByUuidDoors[]>;
+
+  image_url: string;
 };
 
 export type GetCalendarByUuidDoors = {
-  __typename?: "Door";
+  __typename?: 'Door';
 
   id: string;
 
@@ -117,13 +119,13 @@ export type GetCalendarByIdVariables = {
 };
 
 export type GetCalendarByIdQuery = {
-  __typename?: "Query";
+  __typename?: 'Query';
 
   calendar: GetCalendarByIdCalendar;
 };
 
 export type GetCalendarByIdCalendar = {
-  __typename?: "Calendar";
+  __typename?: 'Calendar';
 
   id: string;
 
@@ -139,7 +141,7 @@ export type GetCalendarByIdCalendar = {
 };
 
 export type GetCalendarByIdDoors = {
-  __typename?: "Door";
+  __typename?: 'Door';
 
   id: string;
 
@@ -153,7 +155,7 @@ export type UpdateDoorsVariables = {
 };
 
 export type UpdateDoorsMutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
 
   updateDoors: boolean;
 };
@@ -161,13 +163,13 @@ export type UpdateDoorsMutation = {
 export type GetCalendarsVariables = {};
 
 export type GetCalendarsQuery = {
-  __typename?: "Query";
+  __typename?: 'Query';
 
   calendars: Maybe<GetCalendarsCalendars[]>;
 };
 
 export type GetCalendarsCalendars = {
-  __typename?: "Calendar";
+  __typename?: 'Calendar';
 
   id: string;
 
@@ -181,7 +183,7 @@ export type DeleteCalendarVariables = {
 };
 
 export type DeleteCalendarMutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
 
   deleteCalendar: boolean;
 };
@@ -189,19 +191,19 @@ export type DeleteCalendarMutation = {
 export type CalendarCreatedVariables = {};
 
 export type CalendarCreatedSubscription = {
-  __typename?: "Subscription";
+  __typename?: 'Subscription';
 
   calendarCreated: CalendarCreatedCalendarCreated;
 };
 
 export type CalendarCreatedCalendarCreated = {
-  __typename?: "CalendarCreated";
+  __typename?: 'CalendarCreated';
 
   calendar: CalendarCreatedCalendar;
 };
 
 export type CalendarCreatedCalendar = {
-  __typename?: "Calendar";
+  __typename?: 'Calendar';
 
   id: string;
 
@@ -213,13 +215,13 @@ export type CalendarCreatedCalendar = {
 export type CalendarDeletedVariables = {};
 
 export type CalendarDeletedSubscription = {
-  __typename?: "Subscription";
+  __typename?: 'Subscription';
 
   calendarDeleted: CalendarDeletedCalendarDeleted;
 };
 
 export type CalendarDeletedCalendarDeleted = {
-  __typename?: "CalendarDeleted";
+  __typename?: 'CalendarDeleted';
 
   id: string;
 };
@@ -230,61 +232,44 @@ export type SignInVariables = {
 };
 
 export type SignInMutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
 
   signIn: SignInSignIn;
 };
 
 export type SignInSignIn = {
-  __typename?: "Token";
+  __typename?: 'Token';
 
   token: string;
 };
 
-import * as ReactApollo from "react-apollo";
-import * as React from "react";
-
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
+import * as React from 'react';
+import * as ReactApollo from 'react-apollo';
 
 // ====================================================
 // Components
 // ====================================================
 
 export const SaveCalendarMetaDataDocument = gql`
-  mutation SaveCalendarMetaData(
-    $id: ID!
-    $name: String!
-    $year: Int!
-    $uuid: String
-  ) {
+  mutation SaveCalendarMetaData($id: ID!, $name: String!, $year: Int!, $uuid: String) {
     saveCalendarMetaData(id: $id, name: $name, year: $year, uuid: $uuid)
   }
 `;
 export class SaveCalendarMetaDataComponent extends React.Component<
-  Partial<
-    ReactApollo.MutationProps<
-      SaveCalendarMetaDataMutation,
-      SaveCalendarMetaDataVariables
-    >
-  >
+  Partial<ReactApollo.MutationProps<SaveCalendarMetaDataMutation, SaveCalendarMetaDataVariables>>
 > {
   render() {
     return (
-      <ReactApollo.Mutation<
-        SaveCalendarMetaDataMutation,
-        SaveCalendarMetaDataVariables
-      >
+      <ReactApollo.Mutation<SaveCalendarMetaDataMutation, SaveCalendarMetaDataVariables>
         mutation={SaveCalendarMetaDataDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
 }
 export type SaveCalendarMetaDataProps<TChildProps = any> = Partial<
-  ReactApollo.MutateProps<
-    SaveCalendarMetaDataMutation,
-    SaveCalendarMetaDataVariables
-  >
+  ReactApollo.MutateProps<SaveCalendarMetaDataMutation, SaveCalendarMetaDataVariables>
 > &
   TChildProps;
 export type SaveCalendarMetaDataMutationFn = ReactApollo.MutationFn<
@@ -317,15 +302,13 @@ export const CreateCalendarDocument = gql`
   }
 `;
 export class CreateCalendarComponent extends React.Component<
-  Partial<
-    ReactApollo.MutationProps<CreateCalendarMutation, CreateCalendarVariables>
-  >
+  Partial<ReactApollo.MutationProps<CreateCalendarMutation, CreateCalendarVariables>>
 > {
   render() {
     return (
       <ReactApollo.Mutation<CreateCalendarMutation, CreateCalendarVariables>
         mutation={CreateCalendarDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -334,10 +317,7 @@ export type CreateCalendarProps<TChildProps = any> = Partial<
   ReactApollo.MutateProps<CreateCalendarMutation, CreateCalendarVariables>
 > &
   TChildProps;
-export type CreateCalendarMutationFn = ReactApollo.MutationFn<
-  CreateCalendarMutation,
-  CreateCalendarVariables
->;
+export type CreateCalendarMutationFn = ReactApollo.MutationFn<CreateCalendarMutation, CreateCalendarVariables>;
 export function CreateCalendarHOC<TProps, TChildProps = any>(
   operationOptions:
     | ReactApollo.OperationOption<
@@ -348,12 +328,10 @@ export function CreateCalendarHOC<TProps, TChildProps = any>(
       >
     | undefined
 ) {
-  return ReactApollo.graphql<
-    TProps,
-    CreateCalendarMutation,
-    CreateCalendarVariables,
-    CreateCalendarProps<TChildProps>
-  >(CreateCalendarDocument, operationOptions);
+  return ReactApollo.graphql<TProps, CreateCalendarMutation, CreateCalendarVariables, CreateCalendarProps<TChildProps>>(
+    CreateCalendarDocument,
+    operationOptions
+  );
 }
 export const OpenDoorDocument = gql`
   mutation OpenDoor($doorId: ID!) {
@@ -367,35 +345,23 @@ export class OpenDoorComponent extends React.Component<
     return (
       <ReactApollo.Mutation<OpenDoorMutation, OpenDoorVariables>
         mutation={OpenDoorDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
 }
-export type OpenDoorProps<TChildProps = any> = Partial<
-  ReactApollo.MutateProps<OpenDoorMutation, OpenDoorVariables>
-> &
+export type OpenDoorProps<TChildProps = any> = Partial<ReactApollo.MutateProps<OpenDoorMutation, OpenDoorVariables>> &
   TChildProps;
-export type OpenDoorMutationFn = ReactApollo.MutationFn<
-  OpenDoorMutation,
-  OpenDoorVariables
->;
+export type OpenDoorMutationFn = ReactApollo.MutationFn<OpenDoorMutation, OpenDoorVariables>;
 export function OpenDoorHOC<TProps, TChildProps = any>(
   operationOptions:
-    | ReactApollo.OperationOption<
-        TProps,
-        OpenDoorMutation,
-        OpenDoorVariables,
-        OpenDoorProps<TChildProps>
-      >
+    | ReactApollo.OperationOption<TProps, OpenDoorMutation, OpenDoorVariables, OpenDoorProps<TChildProps>>
     | undefined
 ) {
-  return ReactApollo.graphql<
-    TProps,
-    OpenDoorMutation,
-    OpenDoorVariables,
-    OpenDoorProps<TChildProps>
-  >(OpenDoorDocument, operationOptions);
+  return ReactApollo.graphql<TProps, OpenDoorMutation, OpenDoorVariables, OpenDoorProps<TChildProps>>(
+    OpenDoorDocument,
+    operationOptions
+  );
 }
 export const UploadImageDocument = gql`
   mutation UploadImage($calendarId: ID!, $file: Upload!) {
@@ -409,7 +375,7 @@ export class UploadImageComponent extends React.Component<
     return (
       <ReactApollo.Mutation<UploadImageMutation, UploadImageVariables>
         mutation={UploadImageDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -418,26 +384,16 @@ export type UploadImageProps<TChildProps = any> = Partial<
   ReactApollo.MutateProps<UploadImageMutation, UploadImageVariables>
 > &
   TChildProps;
-export type UploadImageMutationFn = ReactApollo.MutationFn<
-  UploadImageMutation,
-  UploadImageVariables
->;
+export type UploadImageMutationFn = ReactApollo.MutationFn<UploadImageMutation, UploadImageVariables>;
 export function UploadImageHOC<TProps, TChildProps = any>(
   operationOptions:
-    | ReactApollo.OperationOption<
-        TProps,
-        UploadImageMutation,
-        UploadImageVariables,
-        UploadImageProps<TChildProps>
-      >
+    | ReactApollo.OperationOption<TProps, UploadImageMutation, UploadImageVariables, UploadImageProps<TChildProps>>
     | undefined
 ) {
-  return ReactApollo.graphql<
-    TProps,
-    UploadImageMutation,
-    UploadImageVariables,
-    UploadImageProps<TChildProps>
-  >(UploadImageDocument, operationOptions);
+  return ReactApollo.graphql<TProps, UploadImageMutation, UploadImageVariables, UploadImageProps<TChildProps>>(
+    UploadImageDocument,
+    operationOptions
+  );
 }
 export const DeleteImageDocument = gql`
   mutation DeleteImage($publicId: String!, $calendarId: String!) {
@@ -451,7 +407,7 @@ export class DeleteImageComponent extends React.Component<
     return (
       <ReactApollo.Mutation<DeleteImageMutation, DeleteImageVariables>
         mutation={DeleteImageDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -460,26 +416,16 @@ export type DeleteImageProps<TChildProps = any> = Partial<
   ReactApollo.MutateProps<DeleteImageMutation, DeleteImageVariables>
 > &
   TChildProps;
-export type DeleteImageMutationFn = ReactApollo.MutationFn<
-  DeleteImageMutation,
-  DeleteImageVariables
->;
+export type DeleteImageMutationFn = ReactApollo.MutationFn<DeleteImageMutation, DeleteImageVariables>;
 export function DeleteImageHOC<TProps, TChildProps = any>(
   operationOptions:
-    | ReactApollo.OperationOption<
-        TProps,
-        DeleteImageMutation,
-        DeleteImageVariables,
-        DeleteImageProps<TChildProps>
-      >
+    | ReactApollo.OperationOption<TProps, DeleteImageMutation, DeleteImageVariables, DeleteImageProps<TChildProps>>
     | undefined
 ) {
-  return ReactApollo.graphql<
-    TProps,
-    DeleteImageMutation,
-    DeleteImageVariables,
-    DeleteImageProps<TChildProps>
-  >(DeleteImageDocument, operationOptions);
+  return ReactApollo.graphql<TProps, DeleteImageMutation, DeleteImageVariables, DeleteImageProps<TChildProps>>(
+    DeleteImageDocument,
+    operationOptions
+  );
 }
 export const GetCalendarByUuidDocument = gql`
   query GetCalendarByUuid($uuid: String!) {
@@ -491,19 +437,18 @@ export const GetCalendarByUuidDocument = gql`
         message
         open
       }
+      image_url
     }
   }
 `;
 export class GetCalendarByUuidComponent extends React.Component<
-  Partial<
-    ReactApollo.QueryProps<GetCalendarByUuidQuery, GetCalendarByUuidVariables>
-  >
+  Partial<ReactApollo.QueryProps<GetCalendarByUuidQuery, GetCalendarByUuidVariables>>
 > {
   render() {
     return (
       <ReactApollo.Query<GetCalendarByUuidQuery, GetCalendarByUuidVariables>
         query={GetCalendarByUuidDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -546,15 +491,13 @@ export const GetCalendarByIdDocument = gql`
   }
 `;
 export class GetCalendarByIdComponent extends React.Component<
-  Partial<
-    ReactApollo.QueryProps<GetCalendarByIdQuery, GetCalendarByIdVariables>
-  >
+  Partial<ReactApollo.QueryProps<GetCalendarByIdQuery, GetCalendarByIdVariables>>
 > {
   render() {
     return (
       <ReactApollo.Query<GetCalendarByIdQuery, GetCalendarByIdVariables>
         query={GetCalendarByIdDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -573,12 +516,10 @@ export function GetCalendarByIdHOC<TProps, TChildProps = any>(
       >
     | undefined
 ) {
-  return ReactApollo.graphql<
-    TProps,
-    GetCalendarByIdQuery,
-    GetCalendarByIdVariables,
-    GetCalendarByIdProps<TChildProps>
-  >(GetCalendarByIdDocument, operationOptions);
+  return ReactApollo.graphql<TProps, GetCalendarByIdQuery, GetCalendarByIdVariables, GetCalendarByIdProps<TChildProps>>(
+    GetCalendarByIdDocument,
+    operationOptions
+  );
 }
 export const UpdateDoorsDocument = gql`
   mutation UpdateDoors($doors: [DoorInput!]) {
@@ -592,7 +533,7 @@ export class UpdateDoorsComponent extends React.Component<
     return (
       <ReactApollo.Mutation<UpdateDoorsMutation, UpdateDoorsVariables>
         mutation={UpdateDoorsDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -601,26 +542,16 @@ export type UpdateDoorsProps<TChildProps = any> = Partial<
   ReactApollo.MutateProps<UpdateDoorsMutation, UpdateDoorsVariables>
 > &
   TChildProps;
-export type UpdateDoorsMutationFn = ReactApollo.MutationFn<
-  UpdateDoorsMutation,
-  UpdateDoorsVariables
->;
+export type UpdateDoorsMutationFn = ReactApollo.MutationFn<UpdateDoorsMutation, UpdateDoorsVariables>;
 export function UpdateDoorsHOC<TProps, TChildProps = any>(
   operationOptions:
-    | ReactApollo.OperationOption<
-        TProps,
-        UpdateDoorsMutation,
-        UpdateDoorsVariables,
-        UpdateDoorsProps<TChildProps>
-      >
+    | ReactApollo.OperationOption<TProps, UpdateDoorsMutation, UpdateDoorsVariables, UpdateDoorsProps<TChildProps>>
     | undefined
 ) {
-  return ReactApollo.graphql<
-    TProps,
-    UpdateDoorsMutation,
-    UpdateDoorsVariables,
-    UpdateDoorsProps<TChildProps>
-  >(UpdateDoorsDocument, operationOptions);
+  return ReactApollo.graphql<TProps, UpdateDoorsMutation, UpdateDoorsVariables, UpdateDoorsProps<TChildProps>>(
+    UpdateDoorsDocument,
+    operationOptions
+  );
 }
 export const GetCalendarsDocument = gql`
   query getCalendars {
@@ -638,7 +569,7 @@ export class GetCalendarsComponent extends React.Component<
     return (
       <ReactApollo.Query<GetCalendarsQuery, GetCalendarsVariables>
         query={GetCalendarsDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -649,20 +580,13 @@ export type GetCalendarsProps<TChildProps = any> = Partial<
   TChildProps;
 export function GetCalendarsHOC<TProps, TChildProps = any>(
   operationOptions:
-    | ReactApollo.OperationOption<
-        TProps,
-        GetCalendarsQuery,
-        GetCalendarsVariables,
-        GetCalendarsProps<TChildProps>
-      >
+    | ReactApollo.OperationOption<TProps, GetCalendarsQuery, GetCalendarsVariables, GetCalendarsProps<TChildProps>>
     | undefined
 ) {
-  return ReactApollo.graphql<
-    TProps,
-    GetCalendarsQuery,
-    GetCalendarsVariables,
-    GetCalendarsProps<TChildProps>
-  >(GetCalendarsDocument, operationOptions);
+  return ReactApollo.graphql<TProps, GetCalendarsQuery, GetCalendarsVariables, GetCalendarsProps<TChildProps>>(
+    GetCalendarsDocument,
+    operationOptions
+  );
 }
 export const DeleteCalendarDocument = gql`
   mutation DeleteCalendar($id: ID!) {
@@ -670,15 +594,13 @@ export const DeleteCalendarDocument = gql`
   }
 `;
 export class DeleteCalendarComponent extends React.Component<
-  Partial<
-    ReactApollo.MutationProps<DeleteCalendarMutation, DeleteCalendarVariables>
-  >
+  Partial<ReactApollo.MutationProps<DeleteCalendarMutation, DeleteCalendarVariables>>
 > {
   render() {
     return (
       <ReactApollo.Mutation<DeleteCalendarMutation, DeleteCalendarVariables>
         mutation={DeleteCalendarDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -687,10 +609,7 @@ export type DeleteCalendarProps<TChildProps = any> = Partial<
   ReactApollo.MutateProps<DeleteCalendarMutation, DeleteCalendarVariables>
 > &
   TChildProps;
-export type DeleteCalendarMutationFn = ReactApollo.MutationFn<
-  DeleteCalendarMutation,
-  DeleteCalendarVariables
->;
+export type DeleteCalendarMutationFn = ReactApollo.MutationFn<DeleteCalendarMutation, DeleteCalendarVariables>;
 export function DeleteCalendarHOC<TProps, TChildProps = any>(
   operationOptions:
     | ReactApollo.OperationOption<
@@ -701,12 +620,10 @@ export function DeleteCalendarHOC<TProps, TChildProps = any>(
       >
     | undefined
 ) {
-  return ReactApollo.graphql<
-    TProps,
-    DeleteCalendarMutation,
-    DeleteCalendarVariables,
-    DeleteCalendarProps<TChildProps>
-  >(DeleteCalendarDocument, operationOptions);
+  return ReactApollo.graphql<TProps, DeleteCalendarMutation, DeleteCalendarVariables, DeleteCalendarProps<TChildProps>>(
+    DeleteCalendarDocument,
+    operationOptions
+  );
 }
 export const CalendarCreatedDocument = gql`
   subscription CalendarCreated {
@@ -720,21 +637,13 @@ export const CalendarCreatedDocument = gql`
   }
 `;
 export class CalendarCreatedComponent extends React.Component<
-  Partial<
-    ReactApollo.SubscriptionProps<
-      CalendarCreatedSubscription,
-      CalendarCreatedVariables
-    >
-  >
+  Partial<ReactApollo.SubscriptionProps<CalendarCreatedSubscription, CalendarCreatedVariables>>
 > {
   render() {
     return (
-      <ReactApollo.Subscription<
-        CalendarCreatedSubscription,
-        CalendarCreatedVariables
-      >
+      <ReactApollo.Subscription<CalendarCreatedSubscription, CalendarCreatedVariables>
         subscription={CalendarCreatedDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -768,21 +677,13 @@ export const CalendarDeletedDocument = gql`
   }
 `;
 export class CalendarDeletedComponent extends React.Component<
-  Partial<
-    ReactApollo.SubscriptionProps<
-      CalendarDeletedSubscription,
-      CalendarDeletedVariables
-    >
-  >
+  Partial<ReactApollo.SubscriptionProps<CalendarDeletedSubscription, CalendarDeletedVariables>>
 > {
   render() {
     return (
-      <ReactApollo.Subscription<
-        CalendarDeletedSubscription,
-        CalendarDeletedVariables
-      >
+      <ReactApollo.Subscription<CalendarDeletedSubscription, CalendarDeletedVariables>
         subscription={CalendarDeletedDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
@@ -822,34 +723,22 @@ export class SignInComponent extends React.Component<
     return (
       <ReactApollo.Mutation<SignInMutation, SignInVariables>
         mutation={SignInDocument}
-        {...(this as any)["props"] as any}
+        {...((this as any)['props'] as any)}
       />
     );
   }
 }
-export type SignInProps<TChildProps = any> = Partial<
-  ReactApollo.MutateProps<SignInMutation, SignInVariables>
-> &
+export type SignInProps<TChildProps = any> = Partial<ReactApollo.MutateProps<SignInMutation, SignInVariables>> &
   TChildProps;
-export type SignInMutationFn = ReactApollo.MutationFn<
-  SignInMutation,
-  SignInVariables
->;
+export type SignInMutationFn = ReactApollo.MutationFn<SignInMutation, SignInVariables>;
 export function SignInHOC<TProps, TChildProps = any>(
   operationOptions:
-    | ReactApollo.OperationOption<
-        TProps,
-        SignInMutation,
-        SignInVariables,
-        SignInProps<TChildProps>
-      >
+    | ReactApollo.OperationOption<TProps, SignInMutation, SignInVariables, SignInProps<TChildProps>>
     | undefined
 ) {
-  return ReactApollo.graphql<
-    TProps,
-    SignInMutation,
-    SignInVariables,
-    SignInProps<TChildProps>
-  >(SignInDocument, operationOptions);
+  return ReactApollo.graphql<TProps, SignInMutation, SignInVariables, SignInProps<TChildProps>>(
+    SignInDocument,
+    operationOptions
+  );
 }
 /* tslint:enable */

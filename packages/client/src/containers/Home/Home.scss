@@ -1,23 +1,5 @@
-@import '../../shared';
-
-.button {
-  height: 54px;
-  line-height: 56px;
-  letter-spacing: 2px;
-  font-weight: 400;
-  width: 230px;
-}
-
-.link {
-  display: block;
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.error-message {
-  font-size: 0.75rem;
-  float: left;
-  margin-top: 5px;
-  color: lighten(red, 10);
-  margin-bottom: 1rem;
+.container-background {
+  background-image: url('../../img/background.jpg');
+  display: flex;
+  flex-direction: column;
 }

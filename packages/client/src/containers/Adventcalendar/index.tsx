@@ -1,11 +1,10 @@
-import React, { PureComponent } from 'react';
-import './Adventcalendar.scss';
-
 import gql from 'graphql-tag';
+import React, { PureComponent } from 'react';
 import { ChildDataProps } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import Door from '../../components/Door';
 import { GetCalendarByUuidHOC, GetCalendarByUuidQuery, GetCalendarByUuidVariables } from '../../generated/components';
+import './Adventcalendar.scss';
 
 type IProps = ChildDataProps<RouteComponentProps, GetCalendarByUuidQuery, GetCalendarByUuidVariables>;
 
@@ -23,26 +22,38 @@ class Adventcalendar extends PureComponent<IProps, IState> {
   }
 
   public handleRef = (section: HTMLElement) => {
-    const { left, top, width, height } = section.getBoundingClientRect();
-    this.setState({
-      left,
-      top,
-      width,
-      height
-    });
+    if (section) {
+      const { left, top, width, height } = section.getBoundingClientRect();
+      this.setState({
+        left,
+        top,
+        width,
+        height
+      });
+    }
   };
 
   public render() {
+    console.log(this.props);
     const offset = this.state;
 
     if (!this.props.data.getCalendarByUuid || !this.props.data.getCalendarByUuid.doors) {
       return null;
     }
     const doors = this.props.data.getCalendarByUuid.doors;
+    const image_url = this.props.data.getCalendarByUuid.image_url;
     return (
       <section className="section" id="calendar" ref={this.handleRef}>
         {doors.map(door => (
-          <Door key={door.id} id={door.id} day={door.day} message={door.message} isOpen={door.open} offset={offset} />
+          <Door
+            image_url={image_url}
+            key={door.id}
+            id={door.id}
+            day={door.day}
+            message={door.message}
+            isOpen={door.open}
+            offset={offset}
+          />
         ))}
       </section>
     );
@@ -59,6 +70,7 @@ export const GET_CALENDAR_BY_UUID = gql`
         message
         open
       }
+      image_url
     }
   }
 `;

@@ -1,10 +1,8 @@
 import gql from 'graphql-tag';
 import { TweenLite } from 'gsap';
 import React, { Component } from 'react';
-
-import { OpenDoorHOC, OpenDoorMutation, OpenDoorVariables } from '../../generated/components';
-
 import { ChildMutateProps } from 'react-apollo';
+import { OpenDoorHOC, OpenDoorMutation, OpenDoorVariables } from '../../generated/components';
 import './Door.scss';
 
 interface IComponentProps {
@@ -12,6 +10,7 @@ interface IComponentProps {
   day: string;
   message: string;
   isOpen: boolean;
+  image_url: string;
   offset: { left: number; top: number; width: number; height: number };
 }
 
@@ -42,6 +41,8 @@ class Door extends Component<IProps, IState> {
   }
 
   public componentDidMount() {
+    M.AutoInit();
+
     TweenLite.set(this.door, { transformStyle: 'preserve-3d' });
     TweenLite.set([this.back, this.front], { backfaceVisibility: 'hidden', transformStyle: 'preserve-3d' });
 
@@ -80,14 +81,44 @@ class Door extends Component<IProps, IState> {
           <div
             style={{
               backgroundPositionX: this.state.left,
-              backgroundPositionY: this.state.top
+              backgroundPositionY: this.state.top,
+              backgroundImage: `url(${this.props.image_url})`
             }}
-            className="door__back"
+            className="door__back modal-trigger"
             ref={div => (this.back = div)}
+            data-target={`#modal${this.props.day}`}
           >
-            <p className="door__label" style={{ width: '100%', height: '100%' }} onClick={this.onDoorBackClick}>
+            <div
+              className="door__label"
+              data-target={`#modal${this.props.day}`}
+              style={{ background: 'transparent' }}
+              onClick={this.onDoorBackClick}
+            >
               back
-            </p>
+            </div>
+          </div>
+        </div>
+        <div id={`#modal${this.props.day}`} className="modal card card-modal">
+          <div className="card-image">
+            <img className="activator" style={{ objectFit: 'cover' }} src="https://unsplash.it/800/500" />
+          </div>
+          <div className="card-content">
+            <span className="card-title activator">
+              {`${this.props.day}. Dezember`}
+              <i className="material-icons right">more_vert</i>
+            </span>
+          </div>
+          <div className="card-reveal">
+            <span className="card-title grey-text text-darken-4">
+              {`${this.props.day}. Dezember`}
+              <i className="material-icons right">close</i>
+            </span>
+            <p>{this.props.message}</p>
+          </div>
+          <div className="card-action">
+            <a href="#" className="modal-close">
+              Schließen
+            </a>
           </div>
         </div>
       </div>

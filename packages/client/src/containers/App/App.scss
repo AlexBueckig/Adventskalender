@@ -1,48 +1,11 @@
 @import '../../shared';
 
-header {
-  background-color: color(primary);
-  grid-area: header;
+body {
   display: flex;
-  justify-content: center;
-  align-items: center;
-
-  @include desktop {
-    h1 {
-      font-size: 3em;
-    }
-  }
-}
-
-footer {
-  background-color: color(primary);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.App {
-  height: 100vh;
-  width: 100%;
-  display: grid;
-  grid-template-areas:
-    'header'
-    'main'
-    'footer';
-  grid-template-rows: 52px 1fr;
-  font-family: $roboto;
-
-  @include desktop {
-    grid-template-rows: 100px 1fr 50px;
-  }
+  min-height: 100vh;
+  flex-direction: column;
 }
 
 main {
-  @include desktop {
-    display: grid;
-    grid-template-columns: auto $desktop auto;
-    grid-template-areas: '. content .';
-    grid-area: main;
-    height: 100%;
-  }
+  flex: 1 0 auto;
 }

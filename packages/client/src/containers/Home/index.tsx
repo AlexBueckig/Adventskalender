@@ -7,7 +7,6 @@ import { RouteComponentProps } from 'react-router';
 import { Link, withRouter } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import * as yup from 'yup';
-
 import { SignInHOC, SignInMutation, SignInVariables } from '../../generated/components';
 
 // import './Home.scss';

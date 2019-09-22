@@ -28,7 +28,17 @@ interface IMutationFns {
 
 type IProps = IMutationFns & IComponentProps;
 
-class UploadImageForm extends PureComponent<IProps> {
+interface IState {
+  loading: boolean;
+}
+
+class UploadImageForm extends PureComponent<IProps, IState> {
+  public state: IState = { loading: false };
+
+  public componentDidMount = () => {
+    M.AutoInit();
+  };
+
   public render() {
     const { image_url, calendarId } = this.props;
 
@@ -42,7 +52,18 @@ class UploadImageForm extends PureComponent<IProps> {
               <Form>
                 <br />
                 <div className="row">
-                  <FilePicker name="file" setFieldValue={setFieldValue} />
+                  {!this.state.loading && <FilePicker name="file" setFieldValue={setFieldValue} />}
+                  {this.state.loading && (
+                    <div className="center">
+                      <div className="preloader-wrapper big active">
+                        <div className="spinner-layer spinner-blue-only">
+                          <div className="circle-clipper left">
+                            <div className="circle" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {values.file !== '' && (
                   <div className="right-align">
@@ -61,14 +82,34 @@ class UploadImageForm extends PureComponent<IProps> {
         <Fragment>
           <img src={image_url} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
           <div className="right-align">
-            <button className="btn" type="button" onClick={this.deleteImage}>
+            <button data-target="modal1" className="waves-effect waves-light btn modal-trigger">
               Löschen
             </button>
           </div>
         </Fragment>
       );
     }
-    return <div className="card-panel">{content}</div>;
+    return (
+      <div className="card-panel">
+        {content}
+        <div id="modal1" className="modal">
+          <div className="modal-content">
+            <h4>Bild löschen?</h4>
+            <p>Willst du das Bild wirklich löschen?</p>
+          </div>
+          <div className="modal-footer">
+            <a className="modal-close waves-effect waves-teal btn-flat blue-text">Abbrechen</a>
+            <button
+              type="button"
+              className="modal-close waves-effect waves-teal btn-flat blue-text"
+              onClick={this.deleteImage}
+            >
+              Löschen
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   private deleteImage = async () => {
@@ -90,6 +131,7 @@ class UploadImageForm extends PureComponent<IProps> {
     values: UploadImageVariables,
     { setSubmitting }: FormikActions<UploadImageVariables>
   ) => {
+    this.setState({ loading: true });
     setSubmitting(false);
     try {
       const data = await this.props.uploadImage({
@@ -101,6 +143,7 @@ class UploadImageForm extends PureComponent<IProps> {
     } catch (err) {
       M.toast({ html: err.message.replace('GraphQL Error', '') });
     }
+    this.setState({ loading: false });
   };
 }
 
