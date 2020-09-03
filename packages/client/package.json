@@ -54,7 +54,7 @@
     "@types/uuid": "^3.4.4",
     "@types/yup": "^0.26.3",
     "add": "^2.0.6",
-    "graphql-code-generator": "^0.15.1",
+    "graphql-code-generator": "^0.18.2",
     "graphql-codegen-time": "^0.15.1",
     "graphql-codegen-typescript-client": "^0.15.1",
     "graphql-codegen-typescript-common": "0.15.1",
